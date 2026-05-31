@@ -1,0 +1,23 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "tokenBudget": {
+    "sessionWarningThreshold": 0.65,
+    "sessionHardLimit": 150000,
+    "dailyLimit": 500000,
+    "autoCompact": true,
+    "compactAt": 0.70
+  },
+  "model": {
+    "default": "claude-sonnet-4-6",
+    "fallback": "claude-haiku-4-5-20251001",
+    "useHaikuFor": ["rename", "format", "simple-fix", "explain-line"]
+  },
+  "context": {
+    "autoRead": false,
+    "maxFileSize": "50kb",
+    "preferCLI": true
+  },
+  "compactionInstructions": "Preserve: modified files list, reviewer findings, failing tests, next steps. Discard: explorer raw output, full file reads already processed."
+}

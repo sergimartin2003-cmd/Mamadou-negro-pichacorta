@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+vendor/
+.venv/
+__pycache__/
+*.pyc
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+target/
+
+# Lock files (huge, rarely needed)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+Cargo.lock
+composer.lock
+
+# Generated files
+*.generated.*
+src/generated/
+*.min.js
+*.min.css
+
+# Binary & media
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.woff
+*.woff2
+*.ttf
+*.pdf
+*.zip
+*.tar.gz
+
+# Logs & data
+*.log
+*.csv
+*.sql
+*.sqlite
+*.db
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+.env*
+!.env.example
+
+# Test fixtures & snapshots (large)
+__snapshots__/
+fixtures/
+*.snap
+
+# Coverage
+coverage/
+.nyc_output/
+htmlcov/
