@@ -1,0 +1,300 @@
+@import "tailwindcss";
+
+/* ============================================================
+   TradeHub — Design Tokens & Base
+   Dark-first. Vivid/violet accent system. Esports x Apple polish.
+   ============================================================ */
+
+:root {
+  /* ---- Surfaces (cool near-black, layered) ---- */
+  --bg-0: #07090D;          /* deepest — app letterbox / behind */
+  --bg-1: #0B0F14;          /* app background */
+  --bg-2: #11161E;          /* panels / cards */
+  --bg-3: #161D27;          /* raised cards / inputs */
+  --bg-4: #1D2530;          /* hover / active */
+  --bg-float: #1A222D;      /* popovers, modals */
+
+  /* ---- Hairlines & borders ---- */
+  --line-1: rgba(255,255,255,0.06);
+  --line-2: rgba(255,255,255,0.10);
+  --line-3: rgba(255,255,255,0.16);
+
+  /* ---- Text ---- */
+  --tx-1: #F4F7FB;          /* primary */
+  --tx-2: #AEB7C4;          /* secondary */
+  --tx-3: #6C7888;          /* tertiary / muted */
+  --tx-4: #49535F;          /* disabled / faint */
+
+  /* ---- Semantic accents ---- */
+  --profit: #16C784;
+  --profit-dim: rgba(22,199,132,0.14);
+  --profit-line: rgba(22,199,132,0.32);
+  --loss: #EA3943;
+  --loss-dim: rgba(234,57,67,0.14);
+  --loss-line: rgba(234,57,67,0.32);
+
+  /* ---- Brand / UI highlight (violet) ---- */
+  --brand: #9B5CFF;
+  --brand-2: #7C4DFF;
+  --brand-dim: rgba(155,92,255,0.14);
+  --brand-line: rgba(155,92,255,0.34);
+  --brand-glow: rgba(124,77,255,0.45);
+
+  /* ---- Tier colors (esports progression) ---- */
+  --t-bronze:   #C8843C;
+  --t-silver:   #B9C4D0;
+  --t-gold:     #F2B33D;
+  --t-platinum: #46D6C8;
+  --t-diamond:  #56A8FF;
+  --t-master:   #B06CFF;
+  --t-elite:    #FF5C8A;
+
+  /* ---- Radii ---- */
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r-md: 13px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+
+  /* ---- Shadows ---- */
+  --sh-1: 0 1px 2px rgba(0,0,0,0.4);
+  --sh-2: 0 6px 22px rgba(0,0,0,0.45);
+  --sh-3: 0 18px 60px rgba(0,0,0,0.55);
+  --sh-brand: 0 8px 30px rgba(124,77,255,0.35);
+
+  /* ---- Type ---- */
+  --f-display: 'Space Grotesk', system-ui, sans-serif;
+  --f-ui: 'Manrope', system-ui, -apple-system, sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---- Layout metrics ---- */
+  --rail-w: 76px;
+  --nav-w: 232px;
+  --right-w: 320px;
+  --topbar-h: 60px;
+
+  /* density (overridden by tweaks) */
+  --density: 1;
+}
+
+* { box-sizing: border-box; }
+
+html { color-scheme: dark; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg-0);
+  color: var(--tx-1);
+  font-family: var(--f-ui);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root { height: 100%; }
+
+::selection { background: var(--brand-dim); color: #fff; }
+
+/* Scrollbars — slim, dark */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.09);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); background-clip: padding-box; }
+
+/* ---- Typographic helpers ---- */
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.display { font-family: var(--f-display); letter-spacing: -0.01em; }
+.up { color: var(--profit); }
+.down { color: var(--loss); }
+.tnum { font-variant-numeric: tabular-nums; }
+
+h1,h2,h3,h4 { font-family: var(--f-display); margin: 0; letter-spacing: -0.02em; font-weight: 600; }
+
+button { font-family: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+/* ============================================================
+   Reusable component classes
+   ============================================================ */
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: 38px; padding: 0 16px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line-2);
+  background: var(--bg-3);
+  color: var(--tx-1);
+  font-weight: 600; font-size: 13.5px;
+  transition: all .15s ease;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg-4); border-color: var(--line-3); }
+.btn.sm { height: 32px; padding: 0 12px; font-size: 12.5px; }
+.btn.lg { height: 46px; padding: 0 22px; font-size: 15px; }
+.btn.primary {
+  background: linear-gradient(180deg, var(--brand) 0%, var(--brand-2) 100%);
+  border-color: transparent; color: #fff;
+  box-shadow: var(--sh-brand);
+}
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--tx-2); }
+.btn.ghost:hover { background: var(--bg-3); color: var(--tx-1); }
+.btn.outline { background: transparent; }
+.btn.profit { background: var(--profit-dim); border-color: var(--profit-line); color: var(--profit); }
+.btn.block { width: 100%; }
+
+/* --- Cards --- */
+.card {
+  background: var(--bg-2);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-lg);
+}
+.card.pad { padding: 18px; }
+.card.hover { transition: border-color .15s, transform .15s, background .15s; }
+.card.hover:hover { border-color: var(--line-2); background: var(--bg-2); }
+
+/* --- Chips / pills --- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 28px; padding: 0 11px;
+  border-radius: var(--r-pill);
+  background: var(--bg-3); border: 1px solid var(--line-1);
+  color: var(--tx-2); font-size: 12.5px; font-weight: 600;
+  transition: all .14s ease; white-space: nowrap;
+}
+.chip:hover { color: var(--tx-1); border-color: var(--line-2); }
+.chip.active { background: var(--brand-dim); border-color: var(--brand-line); color: #c9b1ff; }
+.chip.tag { height: 24px; padding: 0 9px; font-size: 11.5px; font-family: var(--f-mono); }
+
+/* --- Pills for pnl --- */
+.pnl {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--f-mono); font-weight: 600; font-size: 13px;
+  padding: 3px 9px; border-radius: var(--r-sm);
+  font-variant-numeric: tabular-nums;
+}
+.pnl.up { background: var(--profit-dim); color: var(--profit); }
+.pnl.down { background: var(--loss-dim); color: var(--loss); }
+
+/* --- Divider --- */
+.hr { height: 1px; background: var(--line-1); border: 0; margin: 0; }
+
+/* --- Section label --- */
+.sec-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--tx-3);
+}
+
+/* --- Avatar ring base --- */
+.avatar {
+  position: relative; border-radius: 50%; overflow: hidden;
+  background: var(--bg-4); flex-shrink: 0;
+  display: grid; place-items: center;
+  font-family: var(--f-display); font-weight: 600; color: var(--tx-1);
+}
+
+/* --- Tooltip-ish faint --- */
+.faint { color: var(--tx-3); }
+
+/* --- Focus rings --- */
+input, textarea { font-family: inherit; }
+.input {
+  height: 40px; width: 100%; padding: 0 13px;
+  background: var(--bg-3); border: 1px solid var(--line-2);
+  border-radius: var(--r-sm); color: var(--tx-1); font-size: 13.5px;
+  outline: none; transition: border-color .14s, box-shadow .14s;
+}
+.input::placeholder { color: var(--tx-4); }
+.input:focus { border-color: var(--brand-line); box-shadow: 0 0 0 3px var(--brand-dim); }
+
+/* --- Scroll area --- */
+.scroll { overflow-y: auto; overflow-x: hidden; }
+
+/* --- Skeleton stripe placeholder for imagery --- */
+.ph-img {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.025) 0 10px, rgba(255,255,255,0.05) 10px 20px),
+    var(--bg-3);
+  display: grid; place-items: center;
+  color: var(--tx-3); font-family: var(--f-mono); font-size: 11px;
+  letter-spacing: .04em;
+}
+
+/* --- Icon button --- */
+.th-iconbtn {
+  width: 38px; height: 38px; display: grid; place-items: center;
+  border-radius: var(--r-sm); border: 1px solid transparent;
+  background: transparent; color: var(--tx-2); transition: all .14s;
+}
+.th-iconbtn:hover { background: var(--bg-3); color: var(--tx-1); border-color: var(--line-1); }
+.th-iconbtn.sm { width: 30px; height: 30px; }
+
+/* --- Post action button --- */
+.th-action {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 11px; border-radius: var(--r-sm);
+  border: none; background: transparent; color: var(--tx-3);
+  font-weight: 600; font-size: 12.5px; font-family: var(--f-ui);
+  transition: all .14s;
+}
+.th-action .mono { color: inherit; }
+.th-action:hover { background: var(--bg-3); color: var(--tx-1); }
+
+/* fade-in util */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fadeUp .4s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes pop { 0% { transform: scale(.8); opacity: 0; } 60% { transform: scale(1.06); } 100% { transform: scale(1); opacity: 1; } }
+
+/* ============================================================
+   Tailwind v4 theme mapping — exposes the tokens above as utilities
+   ============================================================ */
+@theme inline {
+  --color-bg-0: var(--bg-0);
+  --color-bg-1: var(--bg-1);
+  --color-bg-2: var(--bg-2);
+  --color-bg-3: var(--bg-3);
+  --color-bg-4: var(--bg-4);
+  --color-bg-float: var(--bg-float);
+
+  --color-line-1: var(--line-1);
+  --color-line-2: var(--line-2);
+  --color-line-3: var(--line-3);
+
+  --color-tx-1: var(--tx-1);
+  --color-tx-2: var(--tx-2);
+  --color-tx-3: var(--tx-3);
+  --color-tx-4: var(--tx-4);
+
+  --color-brand: var(--brand);
+  --color-brand-2: var(--brand-2);
+  --color-profit: var(--profit);
+  --color-loss: var(--loss);
+
+  --color-t-bronze: var(--t-bronze);
+  --color-t-silver: var(--t-silver);
+  --color-t-gold: var(--t-gold);
+  --color-t-platinum: var(--t-platinum);
+  --color-t-diamond: var(--t-diamond);
+  --color-t-master: var(--t-master);
+  --color-t-elite: var(--t-elite);
+
+  --font-display: var(--f-display);
+  --font-ui: var(--f-ui);
+  --font-mono: var(--f-mono);
+
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --radius-pill: var(--r-pill);
+}

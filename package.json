@@ -1,0 +1,50 @@
+{
+  "name": "tradehub",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@stripe/stripe-js": "latest",
+    "@supabase/ssr": "^0.5",
+    "@supabase/supabase-js": "^2",
+    "@tanstack/react-query": "^5",
+    "clsx": "^2",
+    "date-fns": "^4",
+    "framer-motion": "^11",
+    "lucide-react": "latest",
+    "next": "^15",
+    "posthog-js": "latest",
+    "react": "^19",
+    "react-dom": "^19",
+    "stripe": "latest",
+    "tailwind-merge": "^2",
+    "zod": "^3",
+    "zustand": "^5"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "^15",
+    "jsdom": "^25",
+    "postcss": "^8",
+    "prettier": "^3",
+    "prettier-plugin-tailwindcss": "^0.6",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^2"
+  }
+}
