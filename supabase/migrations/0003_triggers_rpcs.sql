@@ -18,9 +18,11 @@ as $$
 declare
   v_handle citext;
 begin
+  -- Fallback handle must be globally unique: the full UID (dashes stripped)
+  -- guarantees that, whereas a short prefix can collide across users.
   v_handle := coalesce(
     nullif(new.raw_user_meta_data ->> 'handle', ''),
-    'trader_' || substr(new.id::text, 1, 8)
+    'trader_' || replace(new.id::text, '-', '')
   );
 
   insert into public.profiles (id, handle, display_name)
@@ -28,10 +30,14 @@ begin
     new.id,
     v_handle,
     coalesce(new.raw_user_meta_data ->> 'display_name', v_handle)
-  );
+  )
+  on conflict (id) do nothing;
 
-  insert into public.trader_stats (profile_id) values (new.id);
-  insert into public.subscriptions (profile_id, plan) values (new.id, 'free');
+  insert into public.trader_stats (profile_id) values (new.id)
+  on conflict (profile_id) do nothing;
+
+  insert into public.subscriptions (profile_id, plan) values (new.id, 'free')
+  on conflict (profile_id) do nothing;
 
   return new;
 end;

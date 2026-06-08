@@ -202,15 +202,30 @@ create policy channel_messages_delete_author on channel_messages
   for delete using (author_id = auth.uid());
 
 -- ------------------------------------------------------------
+-- DM membership helper.
+-- A self-referential policy on dm_participants recurses infinitely
+-- (the policy queries the same table it guards). This SECURITY DEFINER
+-- function reads dm_participants with RLS bypassed, so every DM policy
+-- can ask "is this uid in the thread?" without recursion.
+-- ------------------------------------------------------------
+create or replace function is_dm_member(p_thread uuid, p_profile uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from dm_participants
+    where thread_id = p_thread and profile_id = p_profile
+  );
+$$;
+
+-- ------------------------------------------------------------
 -- DM_THREADS — only participants
 -- ------------------------------------------------------------
 create policy dm_threads_select_participant on dm_threads
-  for select using (
-    exists (
-      select 1 from dm_participants dp
-      where dp.thread_id = id and dp.profile_id = auth.uid()
-    )
-  );
+  for select using (is_dm_member(id, auth.uid()));
 
 create policy dm_threads_insert_auth on dm_threads
   for insert with check (auth.uid() is not null);
@@ -219,12 +234,7 @@ create policy dm_threads_insert_auth on dm_threads
 -- DM_PARTICIPANTS — only participants of the thread
 -- ------------------------------------------------------------
 create policy dm_participants_select_participant on dm_participants
-  for select using (
-    exists (
-      select 1 from dm_participants dp
-      where dp.thread_id = dm_participants.thread_id and dp.profile_id = auth.uid()
-    )
-  );
+  for select using (is_dm_member(thread_id, auth.uid()));
 
 create policy dm_participants_insert_self on dm_participants
   for insert with check (auth.uid() = profile_id);
@@ -233,20 +243,12 @@ create policy dm_participants_insert_self on dm_participants
 -- DM_MESSAGES — only thread participants; author must be self
 -- ------------------------------------------------------------
 create policy dm_messages_select_participant on dm_messages
-  for select using (
-    exists (
-      select 1 from dm_participants dp
-      where dp.thread_id = dm_messages.thread_id and dp.profile_id = auth.uid()
-    )
-  );
+  for select using (is_dm_member(thread_id, auth.uid()));
 
 create policy dm_messages_insert_participant on dm_messages
   for insert with check (
     author_id = auth.uid()
-    and exists (
-      select 1 from dm_participants dp
-      where dp.thread_id = dm_messages.thread_id and dp.profile_id = auth.uid()
-    )
+    and is_dm_member(thread_id, auth.uid())
   );
 
 -- ------------------------------------------------------------
