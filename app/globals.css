@@ -255,6 +255,60 @@ input, textarea { font-family: inherit; }
 @keyframes pop { 0% { transform: scale(.8); opacity: 0; } 60% { transform: scale(1.06); } 100% { transform: scale(1); opacity: 1; } }
 
 /* ============================================================
+   Responsive app shell
+   xl (≥1280): sidebar + right panel · lg (1024–1279): sidebar only
+   <1024: mobile drawer + bottom tab bar
+   ============================================================ */
+.th-shell { display: flex; height: 100dvh; overflow: hidden; background: var(--bg-1); }
+.th-main { display: flex; flex-direction: column; flex: 1; min-width: 0; height: 100%; }
+.th-content { display: flex; flex: 1; min-height: 0; }
+.th-page { flex: 1; min-width: 0; overflow-y: auto; }
+
+.th-nav-link { transition: background .14s, color .14s; }
+.th-nav-link[data-active="false"]:hover { background: var(--bg-3); color: var(--tx-1); }
+
+/* desktop sidebar: hidden below lg, drawer takes over */
+.th-sidebar-desktop { display: none; }
+@media (min-width: 1024px) { .th-sidebar-desktop { display: flex; } }
+
+/* right panel only on xl */
+.th-rightpanel { display: none; }
+@media (min-width: 1280px) { .th-rightpanel { display: flex; } }
+
+/* hamburger only below lg */
+.th-hamburger { display: grid; }
+@media (min-width: 1024px) { .th-hamburger { display: none; } }
+
+/* bottom tab bar only below lg */
+.th-mobilenav { display: flex; }
+@media (min-width: 1024px) { .th-mobilenav { display: none; } }
+
+/* leave room for the bottom bar on mobile */
+@media (max-width: 1023px) { .th-page { padding-bottom: 72px; } }
+
+/* search: collapses to an icon below 768 */
+.th-search-full { display: flex; }
+.th-search-icon { display: grid; }
+@media (min-width: 768px) { .th-search-icon { display: none; } }
+@media (max-width: 767px) { .th-search-full { display: none; } }
+
+/* market selector: segmented ≥640, compact dropdown below */
+.th-market-segmented { display: flex; }
+.th-market-compact { display: none; }
+@media (max-width: 639px) {
+  .th-market-segmented { display: none; }
+  .th-market-compact { display: block; }
+}
+
+/* hide page title on very small screens to save room */
+@media (max-width: 479px) { .th-topbar-title { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { animation: none; }
+  * { scroll-behavior: auto; }
+}
+
+/* ============================================================
    Tailwind v4 theme mapping — exposes the tokens above as utilities
    ============================================================ */
 @theme inline {
