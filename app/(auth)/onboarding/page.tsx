@@ -180,7 +180,7 @@ export default function OnboardingPage() {
           disabled={submitting}
           style={{ minWidth: 148, opacity: submitting ? 0.85 : 1 }}
         >
-          {isLast ? (submitting ? "Finishing…" : "Enter TradeHub") : step === 0 ? "Get started" : "Continue"}
+          {isLast ? (submitting ? "Finalizando…" : "Entrar a EmprendeHub") : step === 0 ? "Empezar" : "Continuar"}
         </Button>
       </div>
     </div>

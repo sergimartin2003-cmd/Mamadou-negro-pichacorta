@@ -31,7 +31,7 @@ export function Sidebar({ me }: SidebarProps) {
       }}
     >
       <div style={{ padding: "4px 8px 18px" }}>
-        <Link href="/feed" aria-label="TradeHub home">
+        <Link href="/feed" aria-label="EmprendeHub inicio">
           <Logo size={30} />
         </Link>
       </div>

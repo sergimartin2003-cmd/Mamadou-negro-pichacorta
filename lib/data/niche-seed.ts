@@ -60,9 +60,9 @@ function compact(n: number): string {
 }
 
 function money(n: number): string {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(n >= 100_000 ? 0 : 1)}k`;
-  return `$${Math.round(n)}`;
+  if (n >= 1_000_000) return `€${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `€${(n / 1_000).toFixed(n >= 100_000 ? 0 : 1)}k`;
+  return `€${Math.round(n)}`;
 }
 
 /** A profile takes part in a niche if it's a guaranteed seed or hashes in. */
@@ -77,37 +77,56 @@ function nicheRp(profile: Profile, slug: NicheSlug): number {
   return clamp(420, 9200, Math.round(profile.rp * (0.55 + (seed % 90) / 100) + ((seed >>> 8) % 1600) - 400));
 }
 
-const STAGE_BY_LEVEL = ["Idea", "MVP", "Traction", "Traction", "Scaling", "Scaling", "Scaling"];
-
 function metricsFor(slug: NicheSlug, level: number, seed: number): Record<string, string> {
   switch (slug) {
-    case "emprendimiento":
+    case "ecommerce":
       return {
-        mrr: money(level * level * 900 + (seed % 2000)),
-        users: compact(level * 1200 + (seed % 4000)),
-        stage: STAGE_BY_LEVEL[level],
-        projects: String(1 + level + (seed % 5)),
+        revenue: money(level * level * 1500 + (seed % 4000)),
+        margin: String(20 + (seed % 35)),
+        roas: (1.8 + (seed % 40) / 10).toFixed(1),
+        orders: String(80 + level * 120 + (seed % 400)),
       };
-    case "real-estate":
+    case "saas":
       return {
-        doors: String(1 + level * 3 + (seed % 6)),
-        portfolio: money(level * 350_000 + (seed % 200_000)),
-        cashFlow: `${money(level * 1500 + (seed % 2500))}/mo`,
-        capRate: (5 + (seed % 50) / 10).toFixed(1),
+        mrr: money(level * level * 800 + (seed % 2500)),
+        churn: (1 + (seed % 80) / 10).toFixed(1),
+        users: compact(level * 150 + (seed % 1200)),
+        ltv: money(300 + level * 400 + (seed % 1500)),
       };
-    case "marketing":
+    case "contenido":
       return {
-        spend: money(level * 40_000 + (seed % 80_000)),
-        roas: (1.5 + (seed % 40) / 10).toFixed(1),
-        audience: compact(level * 8000 + (seed % 30_000)),
-        campaigns: String(5 + level * 4 + (seed % 20)),
+        income: money(level * level * 400 + (seed % 3000)),
+        subs: compact(level * 5000 + (seed % 80_000)),
+        views: compact(level * 40_000 + (seed % 500_000)),
+        rpm: `€${(2 + (seed % 80) / 10).toFixed(1)}`,
       };
-    case "crypto":
+    case "inmobiliario":
       return {
-        portfolio: money(level * 15_000 + (seed % 60_000)),
-        realizedPnl: `+${money(level * 4000 + (seed % 30_000))}`,
-        roi: `+${10 + (seed % 180)}`,
-        win: String(48 + (seed % 38)),
+        units: String(1 + level * 2 + (seed % 5)),
+        netYield: (3 + (seed % 60) / 10).toFixed(1),
+        cashflow: `${money(level * 600 + (seed % 1800))}/mes`,
+        occupancy: String(85 + (seed % 15)),
+      };
+    case "servicios":
+      return {
+        income: money(level * level * 900 + (seed % 5000)),
+        clients: String(2 + level * 2 + (seed % 8)),
+        ticket: money(500 + level * 1200 + (seed % 4000)),
+        retention: String(70 + (seed % 30)),
+      };
+    case "amazon":
+      return {
+        revenue: money(level * level * 1800 + (seed % 6000)),
+        netMargin: String(12 + (seed % 28)),
+        acos: String(8 + (seed % 30)),
+        products: String(1 + level + (seed % 6)),
+      };
+    case "dropshipping":
+      return {
+        revenue: money(level * level * 2000 + (seed % 8000)),
+        roas: (1.5 + (seed % 35) / 10).toFixed(1),
+        margin: String(15 + (seed % 30)),
+        winners: String(1 + level + (seed % 5)),
       };
     default:
       return {};
@@ -167,34 +186,34 @@ export const userNicheStats: readonly NicheStatRow[] = buildUserNicheStats();
 export const crossNichePosts: readonly Post[] = [
   {
     id: "np1",
-    author: "u2",
+    author: "u1",
     time: "22m",
-    niche: "crypto",
-    market: "Crypto",
+    niche: "ecommerce",
+    market: "Stocks",
     dir: "long",
-    symbol: "SOL",
-    title: "Rotated into SOL on the reclaim — on-chain receipts attached",
-    body: "Closed the ETH swing, rotated 12% of the book into SOL on the daily reclaim. Wallet is verified, so the entry is on-chain and timestamped — no screenshots, just the explorer.",
+    symbol: "—",
+    title: "De €0 a €28K/mes en 18 meses — desglose real de mi tienda outdoor",
+    body: "Octubre cerró en €28.4K con 34% de margen bruto. El producto ganador fue una mochila ultraligera; el catálogo sostiene el resto. Tienda conectada, así que el número del perfil es el real, no una captura.",
     rr: 0,
     pnl: 0,
-    result: "open",
-    tags: ["solana", "defi"],
+    result: "win",
+    tags: ["shopify", "producto-ganador"],
     up: 412,
     down: 9,
     comments: 38,
     chart: "",
-    stats: ["Solana", "SOL", "12% port", "+34%"],
+    stats: ["€28.4k", "34%", "3.8x", "1,240"],
   },
   {
     id: "np2",
-    author: "u5",
+    author: "u2",
     time: "1h",
-    niche: "emprendimiento",
+    niche: "saas",
     market: "Crypto",
     dir: "long",
     symbol: "—",
-    title: "Crossed $8.4k MRR this month — here's what moved the needle",
-    body: "Doubled down on onboarding and added annual plans. Stripe-verified, so the number on my profile is the real one. Churn still my biggest problem — open to feedback.",
+    title: "$9.8K MRR y subiendo — build in public, mes 14",
+    body: "Doblé la apuesta en onboarding y añadí planes anuales. Stripe conectado en solo lectura, así que el MRR del perfil es verificado. El churn (3.1%) sigue siendo mi mayor problema — abierto a feedback.",
     rr: 0,
     pnl: 0,
     result: "win",
@@ -203,67 +222,87 @@ export const crossNichePosts: readonly Post[] = [
     down: 4,
     comments: 52,
     chart: "",
-    stats: ["Traction", "SaaS", "$8.4k", "+22%"],
+    stats: ["€9.8k", "+22%", "3.1%", "340"],
   },
   {
     id: "np3",
-    author: "u1",
+    author: "u3",
     time: "3h",
-    niche: "marketing",
+    niche: "contenido",
     market: "Stocks",
     dir: "long",
     symbol: "—",
-    title: "4.1x ROAS on cold paid social — creative teardown inside",
-    body: "Winning angle was problem-aware UGC, not the polished studio cut. Spend scaled to $96k this month at a verified 4.1x. Breakdown of the funnel in the thread.",
+    title: "Report de octubre: 1,2M vistas y €6.2K en ingresos",
+    body: "El vídeo que rompió fue un tutorial de 8 minutos, no el que más trabajé. El mix: 40% AdSense, 35% sponsors, 25% producto propio. RPM medio de €4.1. Datos, no postureo.",
     rr: 0,
     pnl: 0,
     result: "win",
-    tags: ["paid-social", "creative"],
+    tags: ["youtube", "sponsor"],
     up: 521,
     down: 11,
     comments: 47,
     chart: "",
-    stats: ["Meta Ads", "Sales", "4.1x", "+$96k"],
+    stats: ["€6.2k", "58k", "1.2M", "€4.1"],
   },
   {
     id: "np4",
     author: "u4",
     time: "5h",
-    niche: "real-estate",
+    niche: "inmobiliario",
     market: "Stocks",
     dir: "long",
     symbol: "—",
-    title: "Closed a BRRRR in Austin — 7.4% cap, refinanced all-in",
-    body: "Bought distressed, rehabbed in 9 weeks, refinanced at the new ARV and pulled most of the capital back out. Closing docs uploaded, so the portfolio bump is verified.",
+    title: "Cerré un piso para alquilar — 7,4% neto con los números encima",
+    body: "Compra más reforma todo incluido, alquilado en 3 semanas. Rentabilidad neta del 7,4% y €1.8K de cashflow al mes tras todos los gastos. Escrituras subidas, así que la cartera del perfil queda verificada.",
     rr: 0,
     pnl: 0,
     result: "win",
-    tags: ["brrrr", "buy-hold"],
+    tags: ["alquiler", "reforma"],
     up: 318,
     down: 6,
     comments: 29,
     chart: "",
-    stats: ["Austin, TX", "BRRRR", "7.4%", "$1.8k/mo"],
+    stats: ["Piso", "Alquiler", "7.4%", "€1.8k/mes"],
   },
   {
     id: "np5",
-    author: "u6",
-    time: "8h",
-    niche: "crypto",
-    market: "Crypto",
+    author: "u5",
+    time: "7h",
+    niche: "amazon",
+    market: "Stocks",
     dir: "long",
-    symbol: "ETH",
-    title: "Staking ladder on ETH — boring, verified, compounding",
-    body: "Not a trade — a position. Laddered into staked ETH and LSTs, read-only wallet connected so the yield shows up on-chain. Slow money, but it's real money.",
+    symbol: "—",
+    title: "€31K en Amazon FBA este mes — margen real tras fees y PPC",
+    body: "Marca propia, 6 SKUs activos. Tras los fees de Amazon y el PPC, el margen neto queda en 22%. ACoS medio del 18%, bajando con la nueva estructura de campañas. Reportes conectados.",
     rr: 0,
     pnl: 0,
-    result: "open",
-    tags: ["eth", "defi"],
+    result: "win",
+    tags: ["fba", "ppc"],
     up: 244,
     down: 5,
-    comments: 18,
+    comments: 21,
     chart: "",
-    stats: ["Ethereum", "ETH", "30% port", "+11%"],
+    stats: ["€31k", "22%", "18%", "6"],
+  },
+  {
+    id: "np6",
+    author: "u6",
+    time: "9h",
+    niche: "dropshipping",
+    market: "Crypto",
+    dir: "long",
+    symbol: "—",
+    title: "Producto ganador a 4.1x ROAS — cómo lo encontré y escalé",
+    body: "Testeé 14 productos este mes, 3 quedaron en verde. El ganador escaló de €50/día a €1.6K/día manteniendo 4.1x de ROAS y 28% de margen neto. Ad account conectado, métricas verificadas.",
+    rr: 0,
+    pnl: 0,
+    result: "win",
+    tags: ["producto-ganador", "tiktok-ads"],
+    up: 389,
+    down: 8,
+    comments: 33,
+    chart: "",
+    stats: ["€48k", "4.1x", "28%", "3"],
   },
 ] as const;
 

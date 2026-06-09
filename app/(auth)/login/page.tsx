@@ -103,7 +103,7 @@ function LoginForm() {
       </form>
 
       <p style={{ marginTop: 22, fontSize: 13.5, color: "var(--tx-2)", textAlign: "center" }}>
-        New to TradeHub?{" "}
+        ¿Nuevo en EmprendeHub?{" "}
         <Link href="/signup" style={{ color: "var(--brand)", fontWeight: 600 }}>
           Create an account
         </Link>

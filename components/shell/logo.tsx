@@ -34,7 +34,7 @@ export function Logo({ size = 30, withText = true }: LogoProps) {
       </div>
       {withText && (
         <span className="display" style={{ fontSize: size * 0.62, fontWeight: 700, letterSpacing: "-0.03em" }}>
-          Trade<span style={{ color: "var(--brand)" }}>Hub</span>
+          Emprende<span style={{ color: "var(--brand)" }}>Hub</span>
         </span>
       )}
     </div>

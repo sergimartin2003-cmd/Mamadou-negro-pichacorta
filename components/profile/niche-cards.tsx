@@ -77,7 +77,7 @@ export function NicheCards({ rows }: NicheCardsProps) {
               >
                 <RankBadge rp={row.rp} size="sm" niche={row.niche} />
                 <span className="mono" style={{ fontSize: 12.5, color: "var(--tx-3)" }}>
-                  {row.rp.toLocaleString()} RP
+                  {row.rp.toLocaleString()} EP
                 </span>
               </div>
 

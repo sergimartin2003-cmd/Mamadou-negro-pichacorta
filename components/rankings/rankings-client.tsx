@@ -144,9 +144,9 @@ export function RankingsClient({
           <span>Rank</span>
           <span style={{ textTransform: "capitalize" }}>{memberLabel}</span>
           <span>Tier</span>
-          <span>RP</span>
-          <span>Win %</span>
-          <span style={{ textAlign: "right" }}>Season PnL</span>
+          <span>EP</span>
+          <span>Éxito %</span>
+          <span style={{ textAlign: "right" }}>Resultado</span>
         </div>
         <div style={{ minWidth: 560 }}>
           {rest.map((t, i) => (

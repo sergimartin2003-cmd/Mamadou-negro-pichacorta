@@ -49,6 +49,16 @@
   --t-master:   #B06CFF;
   --t-elite:    #FF5C8A;
 
+  /* ---- Niche accents (EmprendeHub) ---- */
+  --niche-ecommerce:    #16C784;
+  --niche-saas:         #9B5CFF;
+  --niche-contenido:    #FF6B9D;
+  --niche-trading:      #F2B33D;
+  --niche-inmobiliario: #56A8FF;
+  --niche-servicios:    #46D6C8;
+  --niche-amazon:       #FF5C5C;
+  --niche-dropshipping: #B06CFF;
+
   /* ---- Radii ---- */
   --r-xs: 6px;
   --r-sm: 9px;

@@ -3,9 +3,11 @@ import { NICHES, NICHE_SLUGS, DEFAULT_NICHE, getNiche, isNicheSlug } from "@/con
 import { nicheTierName, nicheTierFor, nicheLadder } from "@/lib/domain/niche-tiers";
 import { TIERS } from "@/lib/domain/tiers";
 
+const STANDARD_TIERS = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Elite"];
+
 describe("niche registry", () => {
-  it("registers exactly the five niches, keyed by slug", () => {
-    expect(NICHE_SLUGS.length).toBe(5);
+  it("registers exactly the eight EmprendeHub niches, keyed by slug", () => {
+    expect(NICHE_SLUGS.length).toBe(8);
     for (const slug of NICHE_SLUGS) {
       expect(NICHES[slug].slug).toBe(slug);
     }
@@ -30,56 +32,50 @@ describe("niche registry", () => {
 
 describe("getNiche", () => {
   it("resolves a known slug", () => {
-    expect(getNiche("crypto").slug).toBe("crypto");
+    expect(getNiche("saas").slug).toBe("saas");
+    expect(getNiche("dropshipping").slug).toBe("dropshipping");
   });
 
   it("falls back to the default niche for unknown input", () => {
     expect(getNiche("nope").slug).toBe(DEFAULT_NICHE);
     expect(getNiche(undefined).slug).toBe(DEFAULT_NICHE);
+    // Retired niches from the pre-pivot taxonomy are no longer registered.
+    expect(getNiche("crypto").slug).toBe(DEFAULT_NICHE);
   });
 });
 
 describe("isNicheSlug", () => {
   it("accepts registered slugs and rejects others", () => {
+    expect(isNicheSlug("ecommerce")).toBe(true);
+    expect(isNicheSlug("inmobiliario")).toBe(true);
     expect(isNicheSlug("trading")).toBe(true);
-    expect(isNicheSlug("real-estate")).toBe(true);
     expect(isNicheSlug("forex")).toBe(false);
     expect(isNicheSlug("")).toBe(false);
   });
 });
 
 describe("niche tier naming", () => {
-  it("relabels the shared ladder per niche, index-aligned", () => {
-    // Top of the ladder (Elite index) → each niche's apex name.
+  it("uses the shared Bronze→Elite ladder for every niche", () => {
     const topRp = TIERS[TIERS.length - 1].min + 500;
-    expect(nicheTierFor(getNiche("trading"), topRp).name).toBe("Elite");
-    expect(nicheTierFor(getNiche("crypto"), topRp).name).toBe("Satoshi");
-    expect(nicheTierFor(getNiche("emprendimiento"), topRp).name).toBe("Titan");
-    expect(nicheTierFor(getNiche("marketing"), topRp).name).toBe("Legend");
+    for (const slug of NICHE_SLUGS) {
+      expect(nicheTierFor(getNiche(slug), topRp).name).toBe("Elite");
+      expect(nicheTierFor(getNiche(slug), 0).name).toBe("Bronze");
+    }
   });
 
-  it("keeps the shared tier's key and color while swapping the name", () => {
-    const tier = nicheTierFor(getNiche("crypto"), 0);
+  it("keeps the shared tier's key and color while resolving the name", () => {
+    const tier = nicheTierFor(getNiche("amazon"), 0);
     expect(tier.key).toBe("bronze");
-    expect(tier.name).toBe("Newbie");
+    expect(tier.name).toBe("Bronze");
     expect(tier.color).toBe(TIERS[0].color);
   });
 
-  it("nicheLadder returns all seven rungs relabelled in order", () => {
-    const ladder = nicheLadder(getNiche("real-estate"));
-    expect(ladder.map((t) => t.name)).toEqual([
-      "Tenant",
-      "Landlord",
-      "Investor",
-      "Operator",
-      "Syndicator",
-      "Mogul",
-      "Titan",
-    ]);
+  it("nicheLadder returns all seven rungs in order", () => {
+    expect(nicheLadder(getNiche("inmobiliario")).map((t) => t.name)).toEqual(STANDARD_TIERS);
   });
 
   it("nicheTierName matches the module's array for every rung", () => {
-    const module = getNiche("marketing");
+    const module = getNiche("servicios");
     TIERS.forEach((tier, i) => {
       expect(nicheTierName(module, tier)).toBe(module.tierNames[i]);
     });

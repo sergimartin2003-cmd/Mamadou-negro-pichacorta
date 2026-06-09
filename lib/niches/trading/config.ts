@@ -5,7 +5,7 @@ export const trading: NicheModule = {
   slug: "trading",
   name: "Trading",
   tagline: "Verified traders, ranked by risk-adjusted return.",
-  color: "var(--brand)",
+  color: "var(--niche-trading)",
   glyph: "◈",
   copy: {
     member: "trader",

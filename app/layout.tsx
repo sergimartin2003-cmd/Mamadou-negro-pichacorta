@@ -25,9 +25,9 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TradeHub — Compete. Trade. Climb.",
+  title: "EmprendeHub — Aprende. Compite. Crece.",
   description:
-    "TradeHub is the competitive home for traders — share calls, climb the ranks, and prove your edge.",
+    "EmprendeHub es la red social competitiva para emprendedores — comparte tus números reales, sube en el ranking y demuestra resultados.",
 };
 
 export const viewport: Viewport = {

@@ -45,7 +45,7 @@ export default function LandingPage() {
             className="display"
             style={{ fontSize: "44px", fontWeight: 700, color: "var(--tx-1)" }}
           >
-            Trade<span style={{ color: "var(--brand)" }}>Hub</span>
+            Emprende<span style={{ color: "var(--brand)" }}>Hub</span>
           </h1>
         </div>
 
@@ -57,11 +57,11 @@ export default function LandingPage() {
             color: "var(--tx-2)",
           }}
         >
-          The competitive home for traders. Share your calls, climb the ranks, and prove your edge.
+          La red social donde los emprendedores comparten sus números reales, compiten y crecen.
         </p>
 
         <Link href="/feed" className="btn primary lg" style={{ marginTop: "4px" }}>
-          Enter the feed
+          Entrar al feed
         </Link>
       </div>
     </main>

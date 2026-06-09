@@ -143,7 +143,7 @@ export function Pricing() {
             borderColor: "color-mix(in srgb, var(--t-gold) 36%, transparent)",
           }}
         >
-          <Icon name="bolt" size={14} fill /> TradeHub Pro
+          <Icon name="bolt" size={14} fill /> EmprendeHub Pro
         </span>
         <h1 style={{ fontSize: 34, margin: "14px 0 8px" }}>
           Status is earned.{" "}
@@ -157,8 +157,9 @@ export function Pricing() {
             margin: "0 auto",
           }}
         >
-          Unlock verified analytics, unlimited competitions and the tools
-          serious traders use to climb.
+          Desbloquea analíticas verificadas de tu negocio, retos ilimitados,
+          vender tus cursos en el marketplace y las herramientas que los
+          emprendedores usan para crecer.
         </p>
       </div>
 

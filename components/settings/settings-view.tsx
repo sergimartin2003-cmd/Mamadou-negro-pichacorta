@@ -231,7 +231,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
           <div className="card pad" style={{ padding: "24px 28px" }}>
             <h2 style={{ fontSize: 18, marginBottom: 4 }}>Profile</h2>
             <p style={{ color: "var(--tx-3)", fontSize: 13, marginBottom: 20 }}>
-              This is how others see you on TradeHub.
+              Así te ven los demás en EmprendeHub.
             </p>
             <div
               style={{
@@ -385,7 +385,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
             </Row>
             <Row
               label="Product & marketing"
-              sub="News, tips and offers from TradeHub"
+              sub="Novedades, consejos y ofertas de EmprendeHub"
             >
               <Toggle
                 on={toggles.marketing}
@@ -512,7 +512,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
         {(sec === "Account" || sec === "Privacy") && (
           <div className="card pad" style={{ padding: "24px 28px" }}>
             <h2 style={{ fontSize: 18, marginBottom: 6 }}>{sec}</h2>
-            <Row label="Email" sub="alex@tradehub.app">
+            <Row label="Email" sub="alex@emprendehub.app">
               <button className="btn sm">Change</button>
             </Row>
             <Row label="Password" sub="Last changed 3 months ago">
@@ -520,7 +520,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
             </Row>
             <Row
               label="Two-factor auth"
-              sub="Recommended for verified traders"
+              sub="Recomendado para emprendedores verificados"
             >
               <span
                 className="chip tag"

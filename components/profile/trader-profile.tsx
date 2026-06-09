@@ -222,7 +222,7 @@ export function TraderProfile({
                 [
                   ["Followers", formatCompact(u.followers)],
                   ["Following", String(u.following)],
-                  ["RP", u.rp.toLocaleString()],
+                  ["EP", u.rp.toLocaleString()],
                 ] as const
               ).map(([l, v]) => (
                 <div key={l}>

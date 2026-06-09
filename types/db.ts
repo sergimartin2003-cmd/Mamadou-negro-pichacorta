@@ -15,11 +15,14 @@ export type MarketScope = Market | "All";
  * competitive layer (stats, ranks, competitions, learning) is per-niche.
  */
 export type NicheSlug =
+  | "ecommerce"
+  | "saas"
+  | "contenido"
   | "trading"
-  | "emprendimiento"
-  | "real-estate"
-  | "marketing"
-  | "crypto";
+  | "inmobiliario"
+  | "servicios"
+  | "amazon"
+  | "dropshipping";
 
 export type TradeDir = "long" | "short";
 

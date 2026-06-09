@@ -87,3 +87,45 @@ prerenderizados SSG en cada sección) · vitest 123/123 (10 nuevos de nicho).
 3. PostCard: leer el strip desde `post.metrics` jsonb real; Realtime; gates de
    premium por plan; búsqueda global por nicho.
 ---
+
+# Session notes — 2026-06-09 (C) · pivote EmprendeHub (Fase 1)
+
+## Pivote de identidad (manda sobre TradeHub)
+TradeHub → EmprendeHub: red social de emprendimiento con 8 nichos (+ marketplace
+de cursos pendiente). El stack NO cambia. Reconciliación con la capa multi-nicho
+previa (5 nichos): se UNIFICA sobre los 8 nichos del pivote reutilizando toda la
+infraestructura (registro, rutas `/[niche]`, tarjetas de perfil, feed por nicho).
+Trading pasa a ser 1 de los 8.
+
+## Los 8 nichos
+ecommerce · saas · contenido · trading · inmobiliario · servicios · amazon ·
+dropshipping. Cada uno con color (token `--niche-*`), tagline, glyph, métricas de
+perfil, postStatFields, verificación, retos, learning y comunidades semilla.
+
+## Qué se hizo (Fase 1 — identidad, en verde)
+- `NicheSlug` (types/db.ts) → los 8 nichos. `Market` (Crypto/Forex/…) se mantiene
+  como detalle INTERNO del nicho Trading (no se borra para no romper el núcleo).
+- 7 módulos nuevos en `lib/niches/*` + trading; borrados los 4 antiguos.
+- `config/niches.ts`: registro de los 8, `DEFAULT_NICHE='ecommerce'`.
+- `niche-seed.ts`: `metricsFor` por nicho (€), posts cross-nicho en ES para el
+  feed único; generación determinista intacta.
+- Rebrand visible → EmprendeHub: layout/metadata, logo, sidebar, landing, pricing,
+  auth (login/onboarding/brand-panel), settings. Nav ES (Inicio/Nichos/Rankings/
+  Retos/Academia/Mensajes/Perfil). RP→EP, Win→Éxito %, Season PnL→Resultado.
+- Tokens CSS `--niche-*` (8). Tiers estándar Bronze→Elite en todos los nichos.
+- `tests/domain/niches.test.ts` actualizado a los 8 nichos.
+
+## Gates: typecheck ✓ · lint ✓ · build ✓ (8 nichos SSG por sección) · vitest 123/123.
+
+## Pendiente (Fases 2-5)
+- Rutas/páginas nuevas: `/nichos`, `/nichos/[niche]`, `/marketplace` (+detalle +
+  `/learn`), `/teach`; renombrar paths `/competitions`→`/retos`, `/learning`→`/academy`.
+- Marketplace de cursos: schema (courses/modules/lessons/enrollments/reviews/
+  payouts), tipos TS, seed (≥16 cursos), UI (course-card/detail/player/instructor
+  dashboard), Stripe Checkout + webhook → enrollment + payout, RLS.
+- Migración DB real: `niche_type`, `entrepreneur_stats`, `posts.niche/proof_type/
+  business_stage`, `profiles.business_*`.
+- Onboarding 5 pasos (nicho + métricas por nicho), features de instructor en premium,
+  achievements por nicho, y rebrand de los 10 perfiles base a emprendedores
+  (handles afectan rutas `/u/[handle]` → con cuidado).
+---

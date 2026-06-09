@@ -328,7 +328,7 @@ const tradingPostSeed: readonly Omit<Post, "niche">[] = [
     dir: "long",
     symbol: "SOL",
     title: "SOL got me — took the L, here’s the post-mortem",
-    body: "Entered too early before confirmation, ego-averaged, blew through my stop region. Down 2.1R. Posting the loss because accountability is the whole point of TradeHub.",
+    body: "Entered too early before confirmation, ego-averaged, blew through my stop region. Down 2.1R. Posting the loss because accountability is the whole point of EmprendeHub.",
     rr: -2.1,
     pnl: -3.8,
     result: "loss",

@@ -68,8 +68,8 @@ export function BrandPanel() {
               maxWidth: 400,
             }}
           >
-            TradeHub is the proving ground for serious traders. Connect, verify, and let your
-            results speak.
+            EmprendeHub es el terreno de prueba para emprendedores de verdad. Conecta tu negocio,
+            verifica tus números y deja que tus resultados hablen.
           </p>
 
           <ul style={{ listStyle: "none", padding: 0, margin: "28px 0 0", display: "grid", gap: 16 }}>
