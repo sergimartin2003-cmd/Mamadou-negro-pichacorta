@@ -35,3 +35,55 @@ tests/*, configs y README/CI/Vercel.
 - ChartFrame/equity usan PRNG sembrado (sin Math.random) → sin hydration mismatch.
 - RLS validado contra Postgres real; SECURITY DEFINER con search_path fijado.
 ---
+
+# Session notes — 2026-06-09 (B) · capa multi-nicho
+
+## Pivote arquitectónico (manda sobre el plan "5 verticales con selector")
+Una SOLA red social compartida (feed, comunidades, perfiles, mensajes,
+notificaciones, follows → globales, SIN columna de nicho). Encima, una capa
+COMPETITIVA por nicho (stats del usuario, rangos/tiers, competiciones, retos,
+verificación, learning). El selector de nicho vive DENTRO de rankings/
+competitions/learning, no en el shell global. "Una red social, muchos ladders."
+
+## Qué se construyó esta sesión
+- Contrato de nicho: `lib/niches/types.ts` (`NicheModule`) + 5 módulos en
+  `lib/niches/{trading,emprendimiento,real-estate,marketing,crypto}/config.ts`
+  + registro `config/niches.ts` (`NICHES`, `NICHE_SLUGS`, `DEFAULT_NICHE`,
+  `getNiche`, `isNicheSlug`).
+- Motor de tiers parametrizado: `lib/domain/niche-tiers.ts` — el ELO/ladder es
+  el MISMO; solo cambian los NOMBRES de tier (Diamond→Whale→Syndicator…).
+- Seed competitivo por nicho: `lib/data/niche-seed.ts` — `userNicheStats`
+  (una fila por (perfil, nicho): rp, verified, win, delta, métricas de tarjeta),
+  posts cross-nicho para el feed único, competiciones y learning por nicho.
+  Generación DETERMINISTA (FNV-1a, sin Math.random) → sin hydration mismatch.
+- Capa de datos: `getFeed({niche})` (feed único + filtro), `getCompetitions(niche)`,
+  `getLearningPaths(niche)`, `getNicheLeaderboard/Profile/Rp/StatsForProfile`.
+- Rutas competitivas por nicho: `app/(app)/{rankings,competitions,learning}/[niche]`
+  con `generateStaticParams` (5 nichos SSG) + `notFound()` en slug inválido;
+  los índices `/rankings|/competitions|/learning` redirigen al nicho por defecto.
+- UI: `NicheSelector` (in-section) + `NicheChip`; `NicheCards` (tarjetas de perfil
+  por nicho); `RankBadge` con prop `niche` (relabela tier, retrocompatible);
+  feed con filtro de nicho + badge de rango contextual; PostCard parametrizado
+  (strip de stats por `niche.postStatFields`, trading idéntico a antes).
+
+## Decisiones clave
+- `profiles.rp`/`verified` se MANTIENEN como caché denormalizada del nicho
+  primario (trading) para no romper el núcleo existente; la fuente de verdad
+  por nicho es `userNicheStats` (→ futura tabla `user_niche_stats`).
+- `Post`, `Competition`, `LearningPath` ganan campo `niche` (la capa social
+  NO se namespacea). `Post.stats?` permite strip por nicho sin tocar el resto.
+- Social global intacto: feed/comunidades/DMs/notifs sin columna de nicho.
+
+## Gates (verde)
+typecheck ✓ · lint ✓ (solo warnings preexistentes) · build ✓ (5 nichos
+prerenderizados SSG en cada sección) · vitest 123/123 (10 nuevos de nicho).
+
+## Próximos pasos
+1. Migración real `user_niche_stats` (profile_id, niche, rp, tier, win stats,
+   verification ref) + `verified_metrics`/`metric_snapshots` claveados por
+   (profile_id, niche); mover rp/verified fuera de `profiles`.
+2. Verificación por nicho (MVP CSV/upload/firma) y feature propia de cada nicho
+   (deal analyzer, benchmarks+swipe, alpha feed on-chain).
+3. PostCard: leer el strip desde `post.metrics` jsonb real; Realtime; gates de
+   premium por plan; búsqueda global por nicho.
+---

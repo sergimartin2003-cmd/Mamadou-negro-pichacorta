@@ -1,10 +1,7 @@
-import { getLearningPaths, getLessons } from "@/lib/data/queries";
-import { LearningHub } from "@/components/learning/learning-hub";
+import { redirect } from "next/navigation";
+import { DEFAULT_NICHE } from "@/config/niches";
 
-export default async function LearningPage() {
-  const paths = await getLearningPaths();
-  const firstPathId = paths[0]?.id ?? "";
-  const lessons = await getLessons(firstPathId);
-
-  return <LearningHub paths={paths} lessons={lessons} />;
+// The learning hub groups paths per niche; land on the default niche.
+export default function LearningIndex() {
+  redirect(`/learning/${DEFAULT_NICHE}`);
 }

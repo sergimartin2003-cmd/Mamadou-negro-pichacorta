@@ -1,11 +1,7 @@
-import { getCompetitions, getRankings } from "@/lib/data/queries";
-import { CompetitionsView } from "@/components/competitions/competitions-view";
+import { redirect } from "next/navigation";
+import { DEFAULT_NICHE } from "@/config/niches";
 
-export default async function CompetitionsPage() {
-  const [competitions, traders] = await Promise.all([
-    getCompetitions(),
-    getRankings(),
-  ]);
-
-  return <CompetitionsView competitions={competitions} traders={traders} />;
+// Competitions are per-niche; land on the default niche.
+export default function CompetitionsIndex() {
+  redirect(`/competitions/${DEFAULT_NICHE}`);
 }

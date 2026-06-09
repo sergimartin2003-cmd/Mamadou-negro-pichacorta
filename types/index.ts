@@ -1,6 +1,7 @@
 export type {
   Market,
   MarketScope,
+  NicheSlug,
   TradeDir,
   TradeResult,
   TierKey,

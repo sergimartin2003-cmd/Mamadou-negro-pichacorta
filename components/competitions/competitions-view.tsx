@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import type { Competition, Profile } from "@/types/db";
 import { Avatar } from "@/components/ui/avatar";
@@ -23,6 +23,8 @@ const TAB_KIND_MAP: Record<TabOption, string | null> = {
 interface CompetitionsViewProps {
   competitions: Competition[];
   traders: Profile[];
+  /** Optional slot rendered above the view (e.g. the in-section niche selector). */
+  header?: ReactNode;
 }
 
 function isFinished(competition: Competition): boolean {
@@ -37,7 +39,7 @@ function filterCompetitions(competitions: Competition[], tab: TabOption): Compet
   return kind ? ongoing.filter((c) => c.kind === kind) : ongoing;
 }
 
-export function CompetitionsView({ competitions, traders }: CompetitionsViewProps) {
+export function CompetitionsView({ competitions, traders, header }: CompetitionsViewProps) {
   const [tab, setTab] = useState<TabOption>("Active");
   const live = competitions[0];
 
@@ -59,6 +61,7 @@ export function CompetitionsView({ competitions, traders }: CompetitionsViewProp
         gap: 18,
       }}
     >
+      {header}
       {live && (
         <div
           className="card"

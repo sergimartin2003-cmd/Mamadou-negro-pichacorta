@@ -9,6 +9,18 @@ export type Market = "Crypto" | "Forex" | "Futures" | "Stocks";
 /** Communities/competitions may target every market. */
 export type MarketScope = Market | "All";
 
+/**
+ * Competitive-layer niches. The social layer (feed, communities, DMs,
+ * notifications, identity) is shared and never namespaced by niche; only the
+ * competitive layer (stats, ranks, competitions, learning) is per-niche.
+ */
+export type NicheSlug =
+  | "trading"
+  | "emprendimiento"
+  | "real-estate"
+  | "marketing"
+  | "crypto";
+
 export type TradeDir = "long" | "short";
 
 export type TradeResult = "win" | "loss" | "open";
@@ -60,6 +72,8 @@ export interface Post {
   id: string;
   author: string;
   time: string;
+  /** Optional competitive-layer tag for the shared feed (filter + rank badge). */
+  niche: NicheSlug;
   market: Market;
   dir: TradeDir;
   symbol: string;
@@ -73,6 +87,12 @@ export interface Post {
   down: number;
   comments: number;
   chart: string;
+  /**
+   * Optional 4-value stat-strip override for non-trading niches. Column labels
+   * come from the active niche module's `postStatFields`; when absent the strip
+   * falls back to the trading fields (symbol/direction/R:R/result).
+   */
+  stats?: readonly [string, string, string, string];
 }
 
 export interface Community {
@@ -107,6 +127,7 @@ export type CompetitionKind = "Seasonal" | "48h Battle" | "Friends";
 export interface Competition {
   id: string;
   name: string;
+  niche: NicheSlug;
   kind: CompetitionKind;
   market: MarketScope;
   participants: number;
@@ -121,6 +142,7 @@ export interface Competition {
 export interface LearningPath {
   id: string;
   name: string;
+  niche: NicheSlug;
   market: MarketScope;
   color: string;
   icon: string;

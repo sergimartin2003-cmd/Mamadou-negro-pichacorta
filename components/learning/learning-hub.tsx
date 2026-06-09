@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Icon } from "@/components/ui/icon";
 import { PathCard } from "./path-card";
 import { LessonView } from "./lesson-view";
@@ -9,6 +9,8 @@ import type { LearningPath, Lesson } from "@/types/db";
 interface LearningHubProps {
   paths: LearningPath[];
   lessons: Lesson[];
+  /** Optional slot rendered above the hub (e.g. the in-section niche selector). */
+  header?: ReactNode;
 }
 
 const LEVEL = 12;
@@ -18,7 +20,7 @@ const DAY_STREAK = 8;
 const LESSONS_DONE = 28;
 const PATHS_ACTIVE = 3;
 
-export function LearningHub({ paths, lessons }: LearningHubProps) {
+export function LearningHub({ paths, lessons, header }: LearningHubProps) {
   const [openPath, setOpenPath] = useState<LearningPath | null>(null);
   const totalXp = paths.reduce((s, p) => s + p.xp, 0);
   const circumference = 2 * Math.PI * 31;
@@ -35,6 +37,8 @@ export function LearningHub({ paths, lessons }: LearningHubProps) {
 
   return (
     <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", gap: 18 }}>
+      {header}
+
       {/* XP header */}
       <div
         className="card"

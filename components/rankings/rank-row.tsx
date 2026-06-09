@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { Profile } from "@/types/db";
+import type { Profile, NicheSlug } from "@/types/db";
 import { Avatar } from "@/components/ui/avatar";
 import { RankBadge, VerifiedTick } from "@/components/ui/rank-badge";
 import { Pnl } from "@/components/ui/pnl";
@@ -10,6 +10,7 @@ import { tierFor } from "@/lib/domain/tiers";
 interface RankRowProps {
   profile: Profile;
   rank: number;
+  niche?: NicheSlug;
   highlight?: boolean;
 }
 
@@ -17,7 +18,7 @@ function deltaFor(rank: number): number {
   return (rank * 7) % 3 === 0 ? -(rank % 4) - 1 : ((rank * 3) % 5) + 1;
 }
 
-export function RankRow({ profile, rank, highlight = false }: RankRowProps) {
+export function RankRow({ profile, rank, niche, highlight = false }: RankRowProps) {
   const tier = tierFor(profile.rp);
   const delta = highlight ? null : deltaFor(rank);
 
@@ -82,12 +83,13 @@ export function RankRow({ profile, rank, highlight = false }: RankRowProps) {
             {profile.verified && <VerifiedTick size={13} />}
           </div>
           <div className="mono" style={{ fontSize: 11.5, color: "var(--tx-3)" }}>
-            @{profile.handle} · {profile.flag} {profile.market}
+            @{profile.handle} · {profile.flag}{" "}
+            {niche && niche !== "trading" ? profile.country : profile.market}
           </div>
         </div>
       </div>
       <div>
-        <RankBadge rp={profile.rp} size="sm" />
+        <RankBadge rp={profile.rp} size="sm" niche={niche} />
       </div>
       <span className="mono" style={{ fontWeight: 700, fontSize: 13.5 }}>
         {profile.rp.toLocaleString()}

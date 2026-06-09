@@ -8,6 +8,8 @@ import {
   Icon,
   IconButton,
 } from "@/components/ui";
+import { getNiche } from "@/config/niches";
+import { NicheChip } from "@/components/niche/niche-chip";
 import { VoteRail } from "./vote-rail";
 
 interface ResultBadge {
@@ -21,33 +23,44 @@ function resultBadge(r: Post["result"]): ResultBadge {
   return { t: "OPEN", c: "var(--t-diamond)" };
 }
 
+/** Sign/direction-aware color for a stat-strip value. */
+function valueColor(value: string): string | undefined {
+  if (value === "LONG") return "var(--profit)";
+  if (value === "SHORT") return "var(--loss)";
+  if (/^\+/.test(value)) return "var(--profit)";
+  if (/^[-−]/.test(value)) return "var(--loss)";
+  return undefined;
+}
+
 interface PostCardProps {
   post: Post;
   author: Profile;
+  /** Author's RP in this post's niche, for the contextual rank badge. */
+  nicheRp?: number;
   layout?: "comfortable" | "compact";
 }
 
-export function PostCard({ post, author, layout = "comfortable" }: PostCardProps) {
+export function PostCard({ post, author, nicheRp, layout = "comfortable" }: PostCardProps) {
   const rb = resultBadge(post.result);
   const compact = layout === "compact";
   const ringColor = author.rp > 7000 ? "var(--t-gold)" : null;
+  const isTrading = post.niche === "trading";
+  const niche = getNiche(post.niche);
+  const badgeRp = nicheRp ?? author.rp;
 
-  const statStrip = [
-    { l: "Symbol", v: post.symbol, mono: true, c: undefined as string | undefined },
-    {
-      l: "Direction",
-      v: post.dir.toUpperCase(),
-      mono: false,
-      c: post.dir === "long" ? "var(--profit)" : "var(--loss)",
-    },
-    { l: "R:R", v: post.rr > 0 ? post.rr.toFixed(1) + ":1" : "—", mono: true, c: undefined },
-    {
-      l: "Result",
-      v: (post.pnl >= 0 ? "+" : "") + post.pnl + "R",
-      mono: true,
-      c: post.pnl >= 0 ? "var(--profit)" : "var(--loss)",
-    },
-  ] as const;
+  // Stat-strip values: explicit override (non-trading) or the trading fallback.
+  const fallback: [string, string, string, string] = [
+    post.symbol,
+    post.dir.toUpperCase(),
+    post.rr > 0 ? post.rr.toFixed(1) + ":1" : "—",
+    (post.pnl >= 0 ? "+" : "") + post.pnl + "R",
+  ];
+  const values = post.stats ?? fallback;
+  const statStrip = niche.postStatFields.map((field, i) => ({
+    l: field.label,
+    v: values[i] ?? "—",
+    c: valueColor(values[i] ?? ""),
+  }));
 
   return (
     <article className="card fade-up" style={{ overflow: "hidden", display: "flex", borderRadius: "var(--r-lg)" }}>
@@ -65,30 +78,35 @@ export function PostCard({ post, author, layout = "comfortable" }: PostCardProps
             <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
               <strong style={{ fontSize: 14 }}>{author.name.replace(/^You · /, "")}</strong>
               {author.verified && <VerifiedTick size={14} />}
-              <RankBadge rp={author.rp} size="sm" showName={false} />
+              <RankBadge rp={badgeRp} size="sm" showName={false} niche={post.niche} />
               <span className="mono" style={{ fontSize: 11.5, color: "var(--tx-4)" }}>
                 · {post.time}
               </span>
             </div>
-            <div className="mono" style={{ fontSize: 11.5, color: "var(--tx-3)", marginTop: 1 }}>
-              @{author.handle} · {post.market}
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
+              <NicheChip niche={post.niche} />
+              <span className="mono" style={{ fontSize: 11.5, color: "var(--tx-3)" }}>
+                @{author.handle}
+              </span>
             </div>
           </div>
-          <span
-            style={{
-              fontSize: 10.5,
-              fontFamily: "var(--f-mono)",
-              fontWeight: 700,
-              color: rb.c,
-              background: `color-mix(in srgb, ${rb.c} 14%, transparent)`,
-              border: `1px solid color-mix(in srgb, ${rb.c} 30%, transparent)`,
-              padding: "3px 9px",
-              borderRadius: "var(--r-pill)",
-              letterSpacing: ".05em",
-            }}
-          >
-            {rb.t}
-          </span>
+          {isTrading && (
+            <span
+              style={{
+                fontSize: 10.5,
+                fontFamily: "var(--f-mono)",
+                fontWeight: 700,
+                color: rb.c,
+                background: `color-mix(in srgb, ${rb.c} 14%, transparent)`,
+                border: `1px solid color-mix(in srgb, ${rb.c} 30%, transparent)`,
+                padding: "3px 9px",
+                borderRadius: "var(--r-pill)",
+                letterSpacing: ".05em",
+              }}
+            >
+              {rb.t}
+            </span>
+          )}
           <IconButton icon="ellipsis" size="sm" aria-label="Post options" />
         </div>
 
@@ -100,7 +118,7 @@ export function PostCard({ post, author, layout = "comfortable" }: PostCardProps
           {post.body}
         </p>
 
-        {/* trade stat strip */}
+        {/* niche stat strip */}
         <div
           style={{
             display: "flex",
@@ -131,8 +149,8 @@ export function PostCard({ post, author, layout = "comfortable" }: PostCardProps
           ))}
         </div>
 
-        {/* chart */}
-        {!compact && (
+        {/* chart (trading setups with a chart label) */}
+        {!compact && isTrading && post.chart && (
           <div style={{ marginBottom: 13 }}>
             <ChartFrame label={post.chart} dir={post.dir} symbol={post.symbol} h={196} />
           </div>
@@ -160,8 +178,8 @@ export function PostCard({ post, author, layout = "comfortable" }: PostCardProps
             <Icon name="bookmark" size={17} /> Save
           </button>
           <div style={{ flex: 1 }} />
-          <button className="th-action" aria-label="Copy setup">
-            <Icon name="target" size={17} /> Copy setup
+          <button className="th-action" aria-label={niche.copy.postAction}>
+            <Icon name="target" size={17} /> {niche.copy.postAction}
           </button>
         </div>
       </div>

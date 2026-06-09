@@ -17,7 +17,8 @@ import { formatCompact } from "@/lib/utils";
 import { PostCard } from "@/components/feed/post-card";
 import { AchievementBadge } from "./achievement-badge";
 import { TradesTable } from "./trades-table";
-import { getAchievements } from "@/lib/data/queries";
+import { NicheCards } from "./niche-cards";
+import { getAchievements, type NicheStatRow } from "@/lib/data/queries";
 
 type ProfileTab = "Posts" | "Trades" | "Stats" | "Achievements";
 type CurveRange = "1M" | "3M" | "1Y" | "All";
@@ -54,9 +55,15 @@ interface TraderProfileProps {
   profile: Profile;
   isMe?: boolean;
   posts?: Post[];
+  nicheStats?: NicheStatRow[];
 }
 
-export function TraderProfile({ profile: u, isMe = false, posts = [] }: TraderProfileProps) {
+export function TraderProfile({
+  profile: u,
+  isMe = false,
+  posts = [],
+  nicheStats = [],
+}: TraderProfileProps) {
   const [tab, setTab] = useState<ProfileTab>("Posts");
   const [curveRange, setCurveRange] = useState<CurveRange>("1Y");
   const [following, setFollowing] = useState(false);
@@ -268,7 +275,10 @@ export function TraderProfile({ profile: u, isMe = false, posts = [] }: TraderPr
         </div>
       </div>
 
-      {/* Stats dashboard — 6 cols → 3 cols → 2 cols */}
+      {/* Per-niche competitive cards — one card per niche the user competes in */}
+      {nicheStats.length > 0 && <NicheCards rows={nicheStats} />}
+
+      {/* Primary-niche stats dashboard — 6 cols → 3 cols → 2 cols */}
       <div
         style={{
           display: "grid",

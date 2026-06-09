@@ -1,4 +1,7 @@
+import type { NicheSlug } from "@/types/db";
 import { tierFor, tierGlyph } from "@/lib/domain/tiers";
+import { nicheTierName } from "@/lib/domain/niche-tiers";
+import { getNiche } from "@/config/niches";
 import { ICONS } from "./icon";
 
 export type RankBadgeSize = "sm" | "md" | "lg";
@@ -7,6 +10,8 @@ export interface RankBadgeProps {
   rp: number;
   size?: RankBadgeSize;
   showName?: boolean;
+  /** When set, the tier is labelled with this niche's names (Diamond → Whale…). */
+  niche?: NicheSlug;
 }
 
 const PADDING: Record<RankBadgeSize, string> = {
@@ -21,8 +26,9 @@ const FONT_SIZE: Record<RankBadgeSize, number> = {
   lg: 14,
 };
 
-export function RankBadge({ rp, size = "md", showName = true }: RankBadgeProps) {
+export function RankBadge({ rp, size = "md", showName = true, niche }: RankBadgeProps) {
   const tier = tierFor(rp);
+  const name = niche ? nicheTierName(getNiche(niche), tier) : tier.name;
   const fs = FONT_SIZE[size];
   return (
     <span
@@ -43,7 +49,7 @@ export function RankBadge({ rp, size = "md", showName = true }: RankBadgeProps) 
       }}
     >
       <span style={{ fontSize: fs * 1.05 }}>{tierGlyph(tier.key)}</span>
-      {showName && tier.name}
+      {showName && name}
     </span>
   );
 }

@@ -265,7 +265,7 @@ export const byId: Readonly<Record<string, Profile>> = Object.fromEntries(
   [...traders, me].map((profile) => [profile.id, profile]),
 );
 
-export const posts: readonly Post[] = [
+const tradingPostSeed: readonly Omit<Post, "niche">[] = [
   {
     id: "p1",
     author: "u3",
@@ -394,6 +394,17 @@ export const posts: readonly Post[] = [
   },
 ] as const;
 
+/**
+ * The shared feed (trading slice). All trading seed posts are tagged with the
+ * `trading` niche; cross-niche posts for the unified feed live in niche-seed.ts
+ * and are merged by the query layer. The feed itself is one shared space — the
+ * niche is only a filterable tag, never a separate feed.
+ */
+export const posts: readonly Post[] = tradingPostSeed.map((post) => ({
+  ...post,
+  niche: "trading" as const,
+}));
+
 export const communities: readonly Community[] = [
   {
     id: "c1",
@@ -486,7 +497,7 @@ export const chatMsgs: readonly ChatMessage[] = [
   },
 ] as const;
 
-export const competitions: readonly Competition[] = [
+const tradingCompetitionSeed: readonly Omit<Competition, "niche">[] = [
   {
     id: "comp1",
     name: "May Crypto League",
@@ -541,7 +552,12 @@ export const competitions: readonly Competition[] = [
   },
 ] as const;
 
-export const learningPaths: readonly LearningPath[] = [
+export const competitions: readonly Competition[] = tradingCompetitionSeed.map((comp) => ({
+  ...comp,
+  niche: "trading" as const,
+}));
+
+const tradingLearningSeed: readonly Omit<LearningPath, "niche">[] = [
   {
     id: "lp1",
     name: "Crypto Foundations",
@@ -587,6 +603,11 @@ export const learningPaths: readonly LearningPath[] = [
     level: 1,
   },
 ] as const;
+
+export const learningPaths: readonly LearningPath[] = tradingLearningSeed.map((path) => ({
+  ...path,
+  niche: "trading" as const,
+}));
 
 export const lessons: readonly Lesson[] = [
   { id: "l1", n: 1, name: "What is risk-of-ruin?", state: "done", min: 6 },
