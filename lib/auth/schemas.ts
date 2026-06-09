@@ -32,7 +32,11 @@ const emailField = z.string().trim().email("Enter a valid email address.");
 
 const passwordField = z
   .string()
-  .min(PASSWORD_MIN, `Password must be at least ${PASSWORD_MIN} characters.`);
+  .min(PASSWORD_MIN, `Password must be at least ${PASSWORD_MIN} characters.`)
+  .refine(
+    (value) => /[A-Za-z]/.test(value) && /\d/.test(value),
+    "Password must include at least one letter and one number.",
+  );
 
 export const signInSchema = z.object({
   email: emailField,

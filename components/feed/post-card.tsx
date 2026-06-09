@@ -89,7 +89,7 @@ export function PostCard({ post, author, layout = "comfortable" }: PostCardProps
           >
             {rb.t}
           </span>
-          <IconButton icon="ellipsis" size="sm" />
+          <IconButton icon="ellipsis" size="sm" aria-label="Post options" />
         </div>
 
         {/* title + body */}
@@ -149,18 +149,18 @@ export function PostCard({ post, author, layout = "comfortable" }: PostCardProps
 
         {/* actions */}
         <div style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--tx-3)" }}>
-          <button className="th-action">
+          <button className="th-action" aria-label="View comments">
             <Icon name="comment" size={17} />
             <span className="mono">{post.comments}</span>
           </button>
-          <button className="th-action">
+          <button className="th-action" aria-label="Share post">
             <Icon name="share" size={17} /> Share
           </button>
-          <button className="th-action">
+          <button className="th-action" aria-label="Save post">
             <Icon name="bookmark" size={17} /> Save
           </button>
           <div style={{ flex: 1 }} />
-          <button className="th-action">
+          <button className="th-action" aria-label="Copy setup">
             <Icon name="target" size={17} /> Copy setup
           </button>
         </div>

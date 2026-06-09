@@ -18,7 +18,8 @@ export function VoteRail({ post, layout = "v" }: VoteRailProps) {
     setV((prev) => (prev === dir ? 0 : dir));
   }
 
-  const displayScore = score > 999 ? (score / 1000).toFixed(1) + "k" : String(score);
+  const displayScore =
+    Math.abs(score) >= 1000 ? (score / 1000).toFixed(1) + "k" : String(score);
   const scoreColor = v === 1 ? "var(--profit)" : v === -1 ? "var(--loss)" : "var(--tx-1)";
 
   return (

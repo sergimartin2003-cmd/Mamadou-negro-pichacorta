@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/lib/auth/actions";
 import { signInSchema } from "@/lib/auth/schemas";
+import { safeNext } from "@/lib/auth/utils";
 import { AuthHeader } from "@/components/auth/auth-header";
 import { Field } from "@/components/auth/field";
 import { FormAlert } from "@/components/auth/form-alert";
@@ -14,10 +15,6 @@ import { SocialButtons } from "@/components/auth/social-buttons";
 import { SubmitButton } from "@/components/auth/submit-button";
 
 type Errors = Partial<Record<"email" | "password", string>>;
-
-function safeNext(value: string | null): string {
-  return value && value.startsWith("/") ? value : "/feed";
-}
 
 function LoginForm() {
   const router = useRouter();

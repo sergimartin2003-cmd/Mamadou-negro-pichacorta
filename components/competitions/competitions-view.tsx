@@ -25,12 +25,16 @@ interface CompetitionsViewProps {
   traders: Profile[];
 }
 
+function isFinished(competition: Competition): boolean {
+  return competition.daysLeft <= 0;
+}
+
 function filterCompetitions(competitions: Competition[], tab: TabOption): Competition[] {
+  if (tab === "Finished") return competitions.filter(isFinished);
+
+  const ongoing = competitions.filter((c) => !isFinished(c));
   const kind = TAB_KIND_MAP[tab];
-  if (tab === "Active") return competitions.filter((c) => c.daysLeft > 0);
-  if (tab === "Finished") return competitions.filter((c) => c.daysLeft === 0);
-  if (kind) return competitions.filter((c) => c.kind === kind);
-  return competitions;
+  return kind ? ongoing.filter((c) => c.kind === kind) : ongoing;
 }
 
 export function CompetitionsView({ competitions, traders }: CompetitionsViewProps) {

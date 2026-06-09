@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseConfigured } from "@/lib/env";
+import { rateLimit } from "@/lib/ratelimit";
 import {
   onboardingSchema,
   requestResetSchema,
@@ -38,6 +39,9 @@ const PERSISTED_CONNECTIONS: ReadonlySet<ConnectionProvider> = new Set([
   "csv",
 ]);
 
+const AUTH_RATE_LIMIT = 5;
+const AUTH_RATE_WINDOW_MS = 60_000;
+
 function failure(error: string, message: string): ActionResult<never> {
   return { ok: false, error, message };
 }
@@ -51,6 +55,23 @@ async function requestOrigin(): Promise<string> {
   return `${proto}://${host}`;
 }
 
+async function clientIp(): Promise<string> {
+  const header = await headers();
+  const forwarded = header.get("x-forwarded-for");
+  return forwarded?.split(",")[0]?.trim() || "unknown";
+}
+
+async function guardAuthAttempt(scope: string, email: string): Promise<boolean> {
+  const ip = await clientIp();
+  const { success } = await rateLimit(`${scope}:${ip}:${email.toLowerCase()}`, {
+    limit: AUTH_RATE_LIMIT,
+    windowMs: AUTH_RATE_WINDOW_MS,
+  });
+  return success;
+}
+
+const RATE_LIMITED = failure("rate_limited", "Too many attempts, try again shortly.");
+
 export async function signIn(input: unknown): Promise<ActionResult> {
   if (!supabaseConfigured()) return NOT_CONFIGURED;
 
@@ -59,9 +80,14 @@ export async function signIn(input: unknown): Promise<ActionResult> {
     return failure("validation", parsed.error.issues[0]?.message ?? "Invalid credentials.");
   }
 
+  if (!(await guardAuthAttempt("sign_in", parsed.data.email))) return RATE_LIMITED;
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return failure("sign_in_failed", error.message);
+  if (error) {
+    console.error("signIn failed:", error.message);
+    return failure("sign_in_failed", "Invalid email or password.");
+  }
 
   return { ok: true, data: undefined };
 }
@@ -74,6 +100,8 @@ export async function signUp(input: unknown): Promise<ActionResult> {
     return failure("validation", parsed.error.issues[0]?.message ?? "Invalid details.");
   }
 
+  if (!(await guardAuthAttempt("sign_up", parsed.data.email))) return RATE_LIMITED;
+
   const origin = await requestOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
@@ -84,7 +112,10 @@ export async function signUp(input: unknown): Promise<ActionResult> {
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
-  if (error) return failure("sign_up_failed", error.message);
+  if (error) {
+    console.error("signUp failed:", error.message);
+    return failure("sign_up_failed", "Could not complete sign up.");
+  }
 
   return { ok: true, data: undefined };
 }
@@ -113,12 +144,15 @@ export async function requestPasswordReset(input: unknown): Promise<ActionResult
     return failure("validation", parsed.error.issues[0]?.message ?? "Invalid email.");
   }
 
+  if (!(await guardAuthAttempt("reset", parsed.data.email))) return RATE_LIMITED;
+
   const origin = await requestOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${origin}/auth/callback`,
   });
-  if (error) return failure("reset_failed", error.message);
+  // Do not reveal whether the email exists: always return the same message.
+  if (error) console.error("requestPasswordReset failed:", error.message);
 
   return { ok: true, data: undefined };
 }

@@ -127,7 +127,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
     marketing: false,
   });
   const [displayName, setDisplayName] = useState(profile.name);
-  const [handle, setHandle] = useState(`@${profile.handle}`);
+  const [handle, setHandle] = useState(profile.handle);
   const [bio, setBio] = useState(profile.bio);
   const [isPending, startTransition] = useTransition();
   const { toast, show } = useToast();
@@ -277,11 +277,26 @@ export function SettingsView({ profile }: SettingsViewProps) {
                 <div className="sec-label" style={{ marginBottom: 7 }}>
                   Handle
                 </div>
-                <input
-                  className="input"
-                  value={handle}
-                  onChange={(e) => setHandle(e.target.value)}
-                />
+                <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                  <span
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      left: 13,
+                      color: "var(--tx-4)",
+                      fontSize: 14,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    @
+                  </span>
+                  <input
+                    className="input"
+                    style={{ paddingLeft: 26 }}
+                    value={handle}
+                    onChange={(e) => setHandle(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
             <div style={{ marginBottom: 16 }}>
@@ -302,7 +317,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
                 className="btn"
                 onClick={() => {
                   setDisplayName(profile.name);
-                  setHandle(`@${profile.handle}`);
+                  setHandle(profile.handle);
                   setBio(profile.bio);
                 }}
               >

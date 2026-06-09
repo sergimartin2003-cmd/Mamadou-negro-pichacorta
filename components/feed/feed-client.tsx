@@ -20,22 +20,34 @@ type Layout = "comfortable" | "compact";
 const SCOPE_OPTIONS: Scope[] = ["For you", "Following", "Trending"];
 const SORT_OPTIONS: Sort[] = ["Trending", "Latest", "Top R"];
 
-function filterPosts(posts: Post[], scope: Scope, sort: Sort): Post[] {
-  let result = [...posts];
+function score(post: Post): number {
+  return post.up - post.down;
+}
 
+function scopePosts(posts: Post[], scope: Scope, followingIds: string[]): Post[] {
+  if (scope === "Following") {
+    const follows = new Set(followingIds);
+    return posts.filter((p) => follows.has(p.author));
+  }
   if (scope === "Trending") {
-    result = result.filter((p) => p.up > 600);
+    return [...posts].sort((a, b) => score(b) - score(a));
   }
+  return posts;
+}
 
-  if (sort === "Latest") {
-    // seed data uses relative time strings; preserve original order (newest first)
-  } else if (sort === "Top R") {
-    result = [...result].sort((a, b) => b.rr - a.rr);
-  } else {
-    result = [...result].sort((a, b) => b.up - b.down - (a.up - a.down));
+function sortPosts(posts: Post[], sort: Sort): Post[] {
+  if (sort === "Top R") {
+    return [...posts].sort((a, b) => b.rr - a.rr);
   }
+  if (sort === "Trending") {
+    return [...posts].sort((a, b) => score(b) - score(a));
+  }
+  // "Latest": seed data is authored newest-first, so preserve incoming order.
+  return posts;
+}
 
-  return result;
+function filterPosts(posts: Post[], scope: Scope, sort: Sort, followingIds: string[]): Post[] {
+  return sortPosts(scopePosts(posts, scope, followingIds), sort);
 }
 
 export function FeedClient({ posts, authors, me }: FeedClientProps) {
@@ -43,7 +55,7 @@ export function FeedClient({ posts, authors, me }: FeedClientProps) {
   const [sort, setSort] = useState<Sort>("Trending");
   const [layout, setLayout] = useState<Layout>("comfortable");
 
-  const visible = filterPosts(posts, scope, sort);
+  const visible = filterPosts(posts, scope, sort, me.followingIds ?? []);
 
   return (
     <div style={{ maxWidth: 680, margin: "0 auto", display: "flex", flexDirection: "column", gap: 14 }}>
@@ -65,8 +77,9 @@ export function FeedClient({ posts, authors, me }: FeedClientProps) {
           className="th-iconbtn"
           onClick={() => setLayout((l) => (l === "compact" ? "comfortable" : "compact"))}
           title="Toggle density"
+          aria-label="Toggle density"
         >
-          <Icon name="filter" size={18} />
+          <Icon name="menu" size={18} />
         </button>
       </div>
 

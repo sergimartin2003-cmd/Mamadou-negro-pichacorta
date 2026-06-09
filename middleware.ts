@@ -3,7 +3,20 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { env, supabaseConfigured } from "@/lib/env";
 
-const PROTECTED_PREFIXES = ["/feed", "/rankings", "/communities", "/learning"] as const;
+const PROTECTED_PREFIXES = [
+  "/feed",
+  "/profile",
+  "/u",
+  "/rankings",
+  "/competitions",
+  "/communities",
+  "/messages",
+  "/notifications",
+  "/learning",
+  "/premium",
+  "/settings",
+  "/create",
+] as const;
 
 function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PREFIXES.some(

@@ -9,13 +9,16 @@ const HANDLED_EVENTS = new Set([
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const webhookSecret = env.stripeWebhookSecret();
-  if (!webhookSecret) {
-    return NextResponse.json({ skipped: true });
+  const serviceRoleKey = env.supabaseServiceRoleKey();
+  const supabaseUrl = env.supabaseUrl();
+  // Missing required config means we cannot verify or persist: fail so Stripe retries.
+  if (!webhookSecret || !serviceRoleKey || !supabaseUrl) {
+    return NextResponse.json({ error: "not_configured" }, { status: 500 });
   }
 
   const stripeKey = env.stripeSecretKey();
   if (!stripeKey) {
-    return NextResponse.json({ skipped: true });
+    return NextResponse.json({ error: "not_configured" }, { status: 500 });
   }
 
   const rawBody = await req.text();
@@ -35,14 +38,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ received: true });
   }
 
-  const serviceRoleKey = env.supabaseServiceRoleKey();
-  const supabaseUrl = env.supabaseUrl();
-  if (!serviceRoleKey || !supabaseUrl) {
-    return NextResponse.json({ received: true });
-  }
-
   const { createClient } = await import("@supabase/supabase-js");
   const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+  // Idempotency: record the event id first; a duplicate insert means we already handled it.
+  const { error: dedupeError } = await supabase
+    .from("stripe_events")
+    .insert({ id: event.id });
+  if (dedupeError) {
+    return NextResponse.json({ received: true, duplicate: true });
+  }
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as import("stripe").Stripe.Checkout.Session;

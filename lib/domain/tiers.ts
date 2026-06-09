@@ -60,12 +60,12 @@ export function tierProgress(rp: number): number {
 export function divisionFor(rp: number): string {
   const current = tierFor(rp);
   const next = nextTier(rp);
-  const previousFloor = previousTierMin(current.key);
-  const span = next ? next.min - current.min : current.min - previousFloor;
+  // Top tier has no ceiling, so size its band from the previous tier's span.
+  const span = next ? next.min - current.min : current.min - previousTierMin(current.key);
   if (span <= 0) return DIVISION_NUMERALS[DIVISIONS - 1];
-  const offset = next ? rp - current.min : rp - current.min;
-  const index = Math.min(DIVISIONS - 1, Math.floor((offset / span) * DIVISIONS));
-  return DIVISION_NUMERALS[Math.max(0, index)];
+  const offset = rp - current.min;
+  const index = Math.min(DIVISIONS - 1, Math.max(0, Math.floor((offset / span) * DIVISIONS)));
+  return DIVISION_NUMERALS[index];
 }
 
 export function tierGlyph(key: TierKey): string {

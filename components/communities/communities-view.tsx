@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChatMessage as ChatMessageType, Channel, Community } from "@/types/db";
 import { Avatar, Button, Icon, IconButton, RankBadge } from "@/components/ui";
 import { ChatMessage } from "./chat-message";
@@ -21,6 +21,12 @@ export function CommunitiesView({ communities, channels, chatMessages }: Communi
   const [mobilePane, setMobilePane] = useState<Pane>("rail");
   const [draft, setDraft] = useState("");
   const [localMessages, setLocalMessages] = useState<ChatMessageType[]>(chatMessages);
+
+  // Switching channel or community must not carry over the prior view's messages or draft.
+  useEffect(() => {
+    setLocalMessages(chatMessages);
+    setDraft("");
+  }, [activeChannel, activeCommunity, chatMessages]);
 
   const comm = communities.find((c) => c.id === activeCommunity);
 
