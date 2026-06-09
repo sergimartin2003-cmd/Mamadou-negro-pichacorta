@@ -14,6 +14,7 @@ export const NAV: readonly NavItem[] = [
   { href: "/rankings", label: "Rankings", icon: "trophy" },
   { href: "/competitions", label: "Retos", icon: "swords" },
   { href: "/learning", label: "Academia", icon: "book" },
+  { href: "/marketplace", label: "Cursos", icon: "play" },
   { href: "/messages", label: "Mensajes", icon: "chat", badge: 2 },
   { href: "/profile", label: "Perfil", icon: "user" },
 ] as const;
@@ -22,7 +23,7 @@ export const NAV: readonly NavItem[] = [
 export const MOBILE_NAV: readonly NavItem[] = [
   { href: "/feed", label: "Inicio", icon: "home" },
   { href: "/rankings", label: "Rankings", icon: "trophy" },
-  { href: "/competitions", label: "Retos", icon: "swords" },
+  { href: "/marketplace", label: "Cursos", icon: "play" },
   { href: "/profile", label: "Perfil", icon: "user" },
 ] as const;
 
@@ -34,6 +35,7 @@ export const ROUTE_TITLES: Readonly<Record<string, string>> = {
   "/rankings": "Rankings de Emprendedores",
   "/competitions": "Retos",
   "/learning": "Academia",
+  "/marketplace": "Marketplace de Cursos",
   "/messages": "Mensajes",
   "/profile": "Mi Perfil",
   "/settings": "Configuración",

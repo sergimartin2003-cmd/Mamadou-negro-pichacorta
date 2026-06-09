@@ -206,3 +206,65 @@ export interface DmMessage {
   text: string;
   file?: string;
 }
+
+// --- Marketplace de cursos --------------------------------------------------
+
+export type CourseLevel = "Principiante" | "Intermedio" | "Avanzado";
+export type CourseFormat = "video" | "texto" | "mixto" | "cohort";
+export type CourseLessonFormat = "video" | "texto" | "quiz" | "ejercicio";
+
+export interface Course {
+  id: string;
+  slug: string;
+  /** Profile id of the instructor (resolved against the shared profile pool). */
+  instructorId: string;
+  title: string;
+  tagline: string;
+  description: string;
+  niche: NicheSlug;
+  level: CourseLevel;
+  format: CourseFormat;
+  /** Price in EUR; 0 = gratis. */
+  price: number;
+  originalPrice?: number;
+  durationHours: number;
+  modulesCount: number;
+  lessonsCount: number;
+  students: number;
+  rating: number; // 0–5
+  reviewsCount: number;
+  language: string;
+  certificate: boolean;
+  updatedAt: string; // relative label, e.g. "hace 2 semanas"
+  createdDaysAgo: number; // drives the "Nuevo" badge
+  tags: string[];
+  whatYouLearn: string[];
+  requirements: string[];
+}
+
+export interface CourseLesson {
+  id: string;
+  n: number;
+  title: string;
+  durationMin: number;
+  format: CourseLessonFormat;
+  /** Free preview lessons are viewable without purchase. */
+  freePreview: boolean;
+}
+
+export interface CourseModule {
+  id: string;
+  n: number;
+  title: string;
+  lessons: CourseLesson[];
+}
+
+export interface CourseReview {
+  id: string;
+  author: string; // profile id
+  rating: number; // 1–5
+  text: string;
+  verifiedPurchase: boolean;
+  helpful: number;
+  time: string;
+}

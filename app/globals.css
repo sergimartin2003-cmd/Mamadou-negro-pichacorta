@@ -362,3 +362,15 @@ input, textarea { font-family: inherit; }
   --radius-xl: var(--r-xl);
   --radius-pill: var(--r-pill);
 }
+
+/* Marketplace: stack the two-column layouts on narrow screens */
+@media (max-width: 880px) {
+  .th-course-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 720px) {
+  .th-learn-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

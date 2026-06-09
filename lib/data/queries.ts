@@ -8,6 +8,9 @@ import type {
   Channel,
   Community,
   Competition,
+  Course,
+  CourseModule,
+  CourseReview,
   Dm,
   DmMessage,
   LearningPath,
@@ -42,6 +45,8 @@ import {
   userNicheStats,
   type NicheStatRow,
 } from "./niche-seed";
+
+import { courses, buildModulesForCourse, buildReviewsForCourse } from "./courses-seed";
 
 export type { NicheStatRow } from "./niche-seed";
 
@@ -209,6 +214,74 @@ export async function getNicheStatsForProfile(profileId: string): Promise<NicheS
   return userNicheStats
     .filter((row) => row.profileId === profileId)
     .sort((a, b) => NICHE_SLUGS.indexOf(a.niche) - NICHE_SLUGS.indexOf(b.niche));
+}
+
+// --- Marketplace de cursos --------------------------------------------------
+
+export type CourseSort = "popular" | "rating" | "new" | "price-asc" | "price-desc";
+
+export interface CourseFilter {
+  niche?: NicheSlug;
+  level?: string;
+  sort?: CourseSort;
+  q?: string;
+  freeOnly?: boolean;
+}
+
+export interface CourseDetail {
+  course: Course;
+  modules: CourseModule[];
+  reviews: CourseReview[];
+  related: Course[];
+}
+
+export async function getCourses(filter: CourseFilter = {}): Promise<Course[]> {
+  let result = [...courses];
+
+  if (filter.niche) result = result.filter((c) => c.niche === filter.niche);
+  if (filter.level) result = result.filter((c) => c.level === filter.level);
+  if (filter.freeOnly) result = result.filter((c) => c.price === 0);
+  if (filter.q) {
+    const q = filter.q.toLowerCase();
+    result = result.filter(
+      (c) => c.title.toLowerCase().includes(q) || c.tags.some((t) => t.includes(q)),
+    );
+  }
+
+  switch (filter.sort) {
+    case "rating":
+      result.sort((a, b) => b.rating - a.rating);
+      break;
+    case "new":
+      result.sort((a, b) => a.createdDaysAgo - b.createdDaysAgo);
+      break;
+    case "price-asc":
+      result.sort((a, b) => a.price - b.price);
+      break;
+    case "price-desc":
+      result.sort((a, b) => b.price - a.price);
+      break;
+    default:
+      result.sort((a, b) => b.students - a.students); // popular
+  }
+
+  return result;
+}
+
+export async function getCourse(slug: string): Promise<CourseDetail | null> {
+  const course = courses.find((c) => c.slug === slug);
+  if (!course) return null;
+  const related = courses.filter((c) => c.niche === course.niche && c.slug !== slug).slice(0, 3);
+  return {
+    course,
+    modules: buildModulesForCourse(course),
+    reviews: buildReviewsForCourse(course),
+    related,
+  };
+}
+
+export function courseSlugs(): string[] {
+  return courses.map((c) => c.slug);
 }
 
 export async function getLessons(pathId: string): Promise<Lesson[]> {
