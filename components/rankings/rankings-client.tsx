@@ -51,8 +51,8 @@ export function RankingsClient({
     return sortByRp(pool);
   }, [traders, mkt, verifiedOnly, showMarketFilter]);
 
-  const top3 = sorted.slice(0, 3) as [Profile, Profile, Profile];
-  const rest = sorted.slice(3);
+  const top3 = sorted.length >= 3 ? (sorted.slice(0, 3) as [Profile, Profile, Profile]) : null;
+  const rest = top3 ? sorted.slice(3) : sorted;
 
   const mePassesFilter = useMemo(() => {
     if (verifiedOnly && !isLeaderboardEligible(me)) return false;
@@ -122,7 +122,7 @@ export function RankingsClient({
         )}
       </div>
 
-      {top3.length >= 3 && (
+      {top3 && (
         <div className="card" style={{ padding: "28px 22px 0", overflow: "hidden" }}>
           <Podium top={top3} />
         </div>

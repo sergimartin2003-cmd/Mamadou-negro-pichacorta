@@ -18,6 +18,7 @@ import { PostCard } from "@/components/feed/post-card";
 import { AchievementBadge } from "./achievement-badge";
 import { TradesTable } from "./trades-table";
 import { NicheCards } from "./niche-cards";
+import { getNiche } from "@/config/niches";
 import { getAchievements, type NicheStatRow } from "@/lib/data/queries";
 
 type ProfileTab = "Posts" | "Trades" | "Stats" | "Achievements";
@@ -73,6 +74,10 @@ export function TraderProfile({
   const tier = tierFor(u.rp);
   const nt = nextTier(u.rp);
   const progress = tierProgress(u.rp);
+
+  // Identity is shared across niches; label by the user's primary niche, not
+  // the trading-only `market` field. nicheStats is in canonical niche order.
+  const primaryMember = nicheStats[0] ? getNiche(nicheStats[0].niche).copy.member : "trader";
 
   const myPosts = posts.filter((p) => p.author === u.id);
 
@@ -176,7 +181,7 @@ export function TraderProfile({
                 {u.verified && <VerifiedTick size={20} />}
               </div>
               <div className="mono" style={{ color: "var(--tx-3)", fontSize: 13, marginTop: 3 }}>
-                @{u.handle} · {u.flag} {u.country} · {u.market} trader
+                @{u.handle} · {u.flag} {u.country} · {primaryMember}
               </div>
             </div>
             {!isMe && (

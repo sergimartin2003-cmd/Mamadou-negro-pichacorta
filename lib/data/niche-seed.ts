@@ -74,7 +74,7 @@ function participates(profile: Profile, slug: NicheSlug, index: number): boolean
 
 function nicheRp(profile: Profile, slug: NicheSlug): number {
   const seed = hash(profile.id + slug);
-  return clamp(420, 9200, Math.round(profile.rp * (0.55 + (seed % 90) / 100) + ((seed >> 8) % 1600) - 400));
+  return clamp(420, 9200, Math.round(profile.rp * (0.55 + (seed % 90) / 100) + ((seed >>> 8) % 1600) - 400));
 }
 
 const STAGE_BY_LEVEL = ["Idea", "MVP", "Traction", "Traction", "Scaling", "Scaling", "Scaling"];
@@ -149,7 +149,7 @@ function buildUserNicheStats(): NicheStatRow[] {
         rp,
         verified: (seed % 100) < (profile.verified ? 70 : 35),
         win: 48 + (seed % 38),
-        delta: ((seed >> 4) % 220) - 40,
+        delta: ((seed >>> 4) % 220) - 40,
         metrics: metricsFor(slug, level, seed),
       });
     });

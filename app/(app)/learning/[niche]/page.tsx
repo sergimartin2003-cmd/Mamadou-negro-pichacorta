@@ -17,7 +17,7 @@ export default async function LearningNichePage({ params }: LearningNichePagePro
   if (!isNicheSlug(niche)) notFound();
 
   const paths = await getLearningPaths(niche);
-  const lessons = await getLessons(paths[0]?.id ?? "");
+  const lessons = paths.length > 0 ? await getLessons(paths[0].id) : [];
 
   return (
     <LearningHub

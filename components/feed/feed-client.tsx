@@ -27,13 +27,12 @@ function score(post: Post): number {
   return post.up - post.down;
 }
 
+// Scope only selects WHICH posts; ordering is the sort's job (applied after).
+// This keeps the sort selection from being silently overridden by the scope.
 function scopePosts(posts: Post[], scope: Scope, followingIds: string[]): Post[] {
   if (scope === "Following") {
     const follows = new Set(followingIds);
     return posts.filter((p) => follows.has(p.author));
-  }
-  if (scope === "Trending") {
-    return [...posts].sort((a, b) => score(b) - score(a));
   }
   return posts;
 }
@@ -153,7 +152,9 @@ export function FeedClient({ posts, authors, me, nicheRpByPost }: FeedClientProp
 
       {visible.length === 0 && (
         <div className="card pad" style={{ textAlign: "center", color: "var(--tx-3)", fontSize: 13.5 }}>
-          {niche === "all" ? "No posts yet." : NICHE_LIST.find((n) => n.slug === niche)?.copy.feedEmpty}
+          {niche === "all"
+            ? "No posts yet."
+            : (NICHE_LIST.find((n) => n.slug === niche)?.copy.feedEmpty ?? "No posts yet.")}
         </div>
       )}
 

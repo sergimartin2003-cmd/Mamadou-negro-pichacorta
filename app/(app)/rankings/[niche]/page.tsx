@@ -23,9 +23,11 @@ export default async function RankingsNichePage({ params }: RankingsNichePagePro
     getNicheProfile(me.id, niche),
   ]);
   const meProfile = meView ?? me;
-  const myRank =
-    [...pool, meProfile].sort((a, b) => b.rp - a.rp).findIndex((p) => p.id === me.id) + 1;
-  const fieldSize = pool.length + 1;
+  // Only rank the user against this ladder if they actually compete in it.
+  const myRank = meView
+    ? [...pool, meView].sort((a, b) => b.rp - a.rp).findIndex((p) => p.id === me.id) + 1
+    : null;
+  const fieldSize = pool.length + (meView ? 1 : 0);
 
   return (
     <div
@@ -81,7 +83,7 @@ export default async function RankingsNichePage({ params }: RankingsNichePagePro
             [
               ["Ends in", "6d 4h"],
               ["Field", fieldSize.toLocaleString()],
-              ["Your rank", `#${myRank.toLocaleString()}`],
+              ["Your rank", myRank ? `#${myRank.toLocaleString()}` : "—"],
             ] as const
           ).map(([label, value]) => (
             <div key={label}>
