@@ -10,7 +10,7 @@ export interface NavItem {
 /** Primary navigation, ported from the prototype `NAV` but pointing at routes. */
 export const NAV: readonly NavItem[] = [
   { href: "/feed", label: "Inicio", icon: "home" },
-  { href: "/communities", label: "Nichos", icon: "compass" },
+  { href: "/nichos", label: "Nichos", icon: "compass" },
   { href: "/rankings", label: "Rankings", icon: "trophy" },
   { href: "/competitions", label: "Retos", icon: "swords" },
   { href: "/learning", label: "Academia", icon: "book" },
@@ -31,7 +31,8 @@ export const MARKETS = ["Crypto", "Forex", "Futures", "Stocks"] as const;
 
 export const ROUTE_TITLES: Readonly<Record<string, string>> = {
   "/feed": "Inicio",
-  "/communities": "Nichos",
+  "/nichos": "Nichos",
+  "/communities": "Comunidad",
   "/rankings": "Rankings de Emprendedores",
   "/competitions": "Retos",
   "/learning": "Academia",
