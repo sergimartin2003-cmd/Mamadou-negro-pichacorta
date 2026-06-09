@@ -20,7 +20,7 @@ const TAGS_MAX = 8;
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 60_000;
 
-export const createPostSchema = z.object({
+const createPostSchema = z.object({
   title: z.string().trim().min(1, "Add a title.").max(TITLE_MAX),
   body: z.string().trim().max(BODY_MAX),
   symbol: z.string().trim().min(1, "Add a symbol.").max(SYMBOL_MAX),

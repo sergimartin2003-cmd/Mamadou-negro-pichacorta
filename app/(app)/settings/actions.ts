@@ -17,7 +17,7 @@ const CONNECTION_PROVIDERS = [
   "csv",
 ] as const;
 
-export const saveProfileSchema = z.object({
+const saveProfileSchema = z.object({
   displayName: z.string().trim().min(1, "Add a display name.").max(DISPLAY_NAME_MAX),
   handle: z
     .string()
@@ -35,7 +35,7 @@ export const saveProfileSchema = z.object({
 
 export type SaveProfileInput = z.infer<typeof saveProfileSchema>;
 
-export const connectBrokerSchema = z.object({
+const connectBrokerSchema = z.object({
   provider: z.enum(CONNECTION_PROVIDERS),
   label: z.string().trim().max(LABEL_MAX).optional(),
 });

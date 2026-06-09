@@ -44,7 +44,7 @@ const DURATION_MAX = 90;
 const NAME_MIN = 3;
 const NAME_MAX = 60;
 
-export const createCompetitionSchema = z.object({
+const createCompetitionSchema = z.object({
   name: z
     .string()
     .trim()
