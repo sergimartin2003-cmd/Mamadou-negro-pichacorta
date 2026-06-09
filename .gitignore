@@ -22,3 +22,7 @@ coverage/
 
 # Vercel
 .vercel
+
+# Local-only: app screenshots + capture helper (not part of the app)
+/shots/
+/scripts/shots.mjs
