@@ -284,6 +284,10 @@ export function courseSlugs(): string[] {
   return courses.map((c) => c.slug);
 }
 
+export async function getCoursesByInstructor(instructorId: string): Promise<Course[]> {
+  return courses.filter((c) => c.instructorId === instructorId);
+}
+
 export async function getLessons(pathId: string): Promise<Lesson[]> {
   void pathId;
   return [...lessons];

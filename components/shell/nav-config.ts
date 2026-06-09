@@ -42,6 +42,7 @@ export const ROUTE_TITLES: Readonly<Record<string, string>> = {
   "/settings": "Configuración",
   "/premium": "EmprendeHub Pro",
   "/create": "Nuevo Post",
+  "/teach": "Panel de instructor",
 };
 
 /** True when `pathname` is within the section rooted at `href`. */

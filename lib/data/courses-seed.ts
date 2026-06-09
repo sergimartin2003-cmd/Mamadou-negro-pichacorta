@@ -234,6 +234,32 @@ const COURSE_SEED: readonly CourseSeedInput[] = [
     whatYouLearn: ["Crear creativos que convierten", "Escalar sin romper el ROAS", "Leer CPM, CTR y ROAS"],
     requirements: ["Un producto validado", "Presupuesto de ads para escalar"],
   },
+  // Cursos del usuario (instructor = "me") — para el panel /teach
+  {
+    slug: "journal-trading-que-funciona",
+    instructorId: "me",
+    title: "El journal de trading que de verdad te hace mejor",
+    tagline: "Mide tu proceso, no solo tu P&L.",
+    niche: "trading",
+    level: "Principiante",
+    price: 0,
+    tags: ["journaling", "psicologia", "proceso"],
+    whatYouLearn: ["Registrar lo que importa de cada trade", "Detectar tus patrones de error", "Convertir datos en mejores decisiones"],
+    requirements: ["Operar (aunque sea en demo)"],
+  },
+  {
+    slug: "construye-tu-side-project",
+    instructorId: "me",
+    title: "Construye tu side project mientras trabajas",
+    tagline: "De idea a primeros ingresos sin dejar tu empleo.",
+    niche: "saas",
+    level: "Principiante",
+    price: 59,
+    originalPrice: 89,
+    tags: ["side-project", "build-in-public", "primer-ingreso"],
+    whatYouLearn: ["Gestionar el tiempo con un empleo", "Lanzar algo pequeño y real", "Conseguir tus primeros ingresos"],
+    requirements: ["Unas horas a la semana", "Ganas de empezar"],
+  },
 ];
 
 const MODULE_TITLES = [
