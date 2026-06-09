@@ -20,13 +20,31 @@ describe("expectedScore", () => {
     expect(expectedScore(1000, 2000)).toBeLessThan(0.5);
   });
 
-  it("should be bounded between 0 and 1 for any inputs", () => {
+  it("should be bounded between 0 and 1 (inclusive) for any inputs", () => {
+    // NOTE: extreme gaps >= ~6400 RP cause 10^(-gap/400) to underflow to 0 in
+    // float64, so expectedScore returns exactly 1 (or exactly 0 for the inverse).
+    // This is correct IEEE 754 behavior, not a source bug.
     const pairs = [
       [0, 0],
       [0, 10000],
       [10000, 0],
       [1000, 1000],
       [500, 9000],
+    ];
+    pairs.forEach(([p, f]) => {
+      const score = expectedScore(p, f);
+      expect(score).toBeGreaterThanOrEqual(0);
+      expect(score).toBeLessThanOrEqual(1);
+    });
+  });
+
+  it("should return strictly between 0 and 1 for moderate RP gaps (< 6400 gap)", () => {
+    // float64 underflow only occurs at RP gaps >= ~6400; these pairs are safe
+    const pairs = [
+      [1000, 6000],   // gap = 5000, well within safe zone
+      [6000, 1000],   // gap = 5000
+      [1000, 3000],   // gap = 2000
+      [500, 500],     // gap = 0
     ];
     pairs.forEach(([p, f]) => {
       const score = expectedScore(p, f);

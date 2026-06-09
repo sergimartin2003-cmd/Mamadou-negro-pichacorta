@@ -42,6 +42,17 @@ export function RankingsClient({ traders, me, verifiedOnly: initialVerifiedOnly 
   const top3 = sorted.slice(0, 3) as [Profile, Profile, Profile];
   const rest = sorted.slice(3);
 
+  const mePassesFilter = useMemo(() => {
+    if (verifiedOnly && !isLeaderboardEligible(me)) return false;
+    if (mkt !== "All markets" && me.market !== (mkt as Profile["market"])) return false;
+    return true;
+  }, [me, mkt, verifiedOnly]);
+
+  const meRealRank = useMemo((): number => {
+    const poolWithMe = sortByRp([...sorted, me]);
+    return poolWithMe.findIndex((p) => p.id === me.id) + 1;
+  }, [sorted, me]);
+
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -124,7 +135,7 @@ export function RankingsClient({ traders, me, verifiedOnly: initialVerifiedOnly 
           {rest.map((t, i) => (
             <RankRow key={t.id} profile={t} rank={i + 4} />
           ))}
-          <RankRow profile={me} rank={1284} highlight />
+          {mePassesFilter && <RankRow profile={me} rank={meRealRank} highlight />}
         </div>
       </div>
     </>

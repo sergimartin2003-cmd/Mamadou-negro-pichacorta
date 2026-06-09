@@ -3,6 +3,8 @@ import { RankingsClient } from "@/components/rankings/rankings-client";
 
 export default async function RankingsPage() {
   const [traders, me] = await Promise.all([getRankings(), getMe()]);
+  const allSorted = [...traders, me].sort((a, b) => b.rp - a.rp);
+  const myRank = allSorted.findIndex((p) => p.id === me.id) + 1;
 
   return (
     <div style={{ maxWidth: 980, margin: "0 auto", padding: "24px 16px", display: "flex", flexDirection: "column", gap: 16 }}>
@@ -51,8 +53,8 @@ export default async function RankingsPage() {
           {(
             [
               ["Ends in", "6d 4h"],
-              ["Traders", "48,210"],
-              ["Your rank", "#1,284"],
+              ["Traders", allSorted.length.toLocaleString()],
+              ["Your rank", `#${myRank.toLocaleString()}`],
             ] as const
           ).map(([label, value]) => (
             <div key={label}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Dm, DmMessage, Profile } from "@/types/db";
 import { Avatar, Button, Icon, IconButton, VerifiedTick } from "@/components/ui";
 import { getDmThread } from "@/lib/data/queries";
@@ -25,17 +25,19 @@ export function MessagesView({ dms, me }: MessagesViewProps) {
   const activeWho = activeDm ? byId[activeDm.who] : null;
   const messages = thread.length > 0 ? [...thread, ...localThread] : localThread;
 
+  useEffect(() => {
+    if (!activeId) return;
+    setLocalThread([]);
+    setDraft("");
+    setLoadingThread(true);
+    getDmThread(activeId)
+      .then((msgs) => setThread(msgs as DmMessage[]))
+      .finally(() => setLoadingThread(false));
+  }, [activeId]);
+
   async function handleSelectDm(id: string) {
     setActiveId(id);
-    setLocalThread([]);
     setMobilePane("thread");
-    setLoadingThread(true);
-    try {
-      const msgs = await getDmThread(id);
-      setThread(msgs as DmMessage[]);
-    } finally {
-      setLoadingThread(false);
-    }
   }
 
   function handleSend() {
@@ -259,9 +261,10 @@ export function MessagesView({ dms, me }: MessagesViewProps) {
               {messages.map((m, i) => {
                 const mine = m.from === "me";
                 const prevSame = i > 0 && messages[i - 1].from === m.from;
+                const key = `${m.from}-${m.time}-${i}`;
                 return (
                   <div
-                    key={i}
+                    key={key}
                     style={{
                       display: "flex",
                       justifyContent: mine ? "flex-end" : "flex-start",

@@ -1,27 +1,53 @@
 "use server";
 
+import { z } from "zod";
 import { supabaseConfigured } from "@/lib/env";
-import type { TradeDir, Market } from "@/types/db";
+import { rateLimit } from "@/lib/ratelimit";
 
-export interface CreatePostInput {
-  title: string;
-  body: string;
-  symbol: string;
-  entry: string;
-  rr: number;
-  dir: TradeDir;
-  market: Market;
-  communityId: string;
-  tags: string[];
-}
+const MARKETS = ["Crypto", "Forex", "Futures", "Stocks"] as const;
+const MARKET_ENUM: Record<(typeof MARKETS)[number], string> = {
+  Crypto: "crypto",
+  Forex: "forex",
+  Futures: "futures",
+  Stocks: "stocks",
+};
 
-export interface CreatePostResult {
-  persisted: boolean;
-}
+const TITLE_MAX = 140;
+const BODY_MAX = 4000;
+const SYMBOL_MAX = 20;
+const TAG_MAX = 30;
+const TAGS_MAX = 8;
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 60_000;
 
-export async function createPost(input: CreatePostInput): Promise<CreatePostResult> {
+export const createPostSchema = z.object({
+  title: z.string().trim().min(1, "Add a title.").max(TITLE_MAX),
+  body: z.string().trim().max(BODY_MAX),
+  symbol: z.string().trim().min(1, "Add a symbol.").max(SYMBOL_MAX),
+  rr: z.number().finite(),
+  dir: z.enum(["long", "short"]),
+  market: z.enum(MARKETS),
+  tags: z.array(z.string().trim().min(1).max(TAG_MAX)).max(TAGS_MAX),
+});
+
+export type CreatePostInput = z.infer<typeof createPostSchema>;
+
+export type CreatePostResult =
+  | { ok: true; persisted: boolean; id?: string }
+  | { ok: false; error: string; message: string };
+
+export async function createPost(input: unknown): Promise<CreatePostResult> {
+  const parsed = createPostSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      error: "validation",
+      message: parsed.error.issues[0]?.message ?? "Invalid post data.",
+    };
+  }
+
   if (!supabaseConfigured()) {
-    return { persisted: false };
+    return { ok: true, persisted: false };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -29,33 +55,59 @@ export async function createPost(input: CreatePostInput): Promise<CreatePostResu
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { persisted: false };
+  if (authError || !user) {
+    return {
+      ok: false,
+      error: "not_authenticated",
+      message: "Your session has expired. Please sign in again.",
+    };
   }
 
-  const { error } = await supabase.from("posts").insert({
-    author: user.id,
-    title: input.title,
-    body: input.body,
-    symbol: input.symbol,
-    entry: input.entry,
-    rr: input.rr,
-    dir: input.dir,
-    market: input.market,
-    community_id: input.communityId,
-    tags: input.tags,
-    result: "open",
-    up: 0,
-    down: 0,
-    comments: 0,
-    pnl: 0,
+  const limited = await rateLimit(`create-post:${user.id}`, {
+    limit: RATE_LIMIT,
+    windowMs: RATE_WINDOW_MS,
   });
-
-  if (error) {
-    throw new Error(`Failed to persist post: ${error.message}`);
+  if (!limited.success) {
+    return {
+      ok: false,
+      error: "rate_limited",
+      message: "Too many attempts, try again shortly.",
+    };
   }
 
-  return { persisted: true };
+  const { data, error } = await supabase
+    .from("posts")
+    .insert({
+      author_id: user.id,
+      title: parsed.data.title,
+      body: parsed.data.body,
+      symbol: parsed.data.symbol,
+      rr: parsed.data.rr,
+      dir: parsed.data.dir,
+      market: MARKET_ENUM[parsed.data.market],
+      result: "open",
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    return {
+      ok: false,
+      error: "insert_failed",
+      message: error?.message ?? "Could not create post.",
+    };
+  }
+
+  if (parsed.data.tags.length > 0) {
+    const rows = parsed.data.tags.map((tag) => ({ post_id: data.id, tag }));
+    const { error: tagError } = await supabase.from("post_tags").insert(rows);
+    if (tagError) {
+      return { ok: false, error: "tags_failed", message: tagError.message };
+    }
+  }
+
+  return { ok: true, persisted: true, id: data.id as string };
 }

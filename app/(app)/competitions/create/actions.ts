@@ -3,9 +3,28 @@
 import { z } from "zod";
 import { supabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/ratelimit";
 
 const COMPETITION_KINDS = ["Seasonal", "48h Battle", "Friends"] as const;
 const COMPETITION_MARKETS = ["Crypto", "Forex", "Futures", "Stocks", "All"] as const;
+
+const KIND_ENUM: Record<(typeof COMPETITION_KINDS)[number], string> = {
+  Seasonal: "seasonal",
+  "48h Battle": "battle",
+  Friends: "friends",
+};
+
+// `All` is not a market_type enum value; competitions.market is nullable.
+const MARKET_ENUM: Record<(typeof COMPETITION_MARKETS)[number], string | null> = {
+  Crypto: "crypto",
+  Forex: "forex",
+  Futures: "futures",
+  Stocks: "stocks",
+  All: null,
+};
+
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 60_000;
 const COMPETITION_METRICS = [
   "Risk-adjusted return",
   "Net R multiple",
@@ -74,14 +93,26 @@ export async function createCompetition(
     };
   }
 
-  const { data, error } = await supabase.rpc("join_competition", {
+  const limited = await rateLimit(`create-competition:${auth.user.id}`, {
+    limit: RATE_LIMIT,
+    windowMs: RATE_WINDOW_MS,
+  });
+  if (!limited.success) {
+    return {
+      ok: false,
+      error: "rate_limited",
+      message: "Too many attempts, try again shortly.",
+    };
+  }
+
+  const { data, error } = await supabase.rpc("create_competition", {
     p_name: parsed.data.name,
-    p_kind: parsed.data.kind,
-    p_market: parsed.data.market,
+    p_kind: KIND_ENUM[parsed.data.kind],
+    p_market: MARKET_ENUM[parsed.data.market],
     p_metric: parsed.data.metric,
     p_rule: parsed.data.rule,
+    p_prize: "",
     p_duration_days: parsed.data.duration,
-    p_creator_id: auth.user.id,
   });
 
   if (error) {

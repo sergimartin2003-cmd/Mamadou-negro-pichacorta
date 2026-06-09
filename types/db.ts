@@ -53,6 +53,7 @@ export interface Profile {
   bio: string;
   followers: number;
   following: number;
+  followingIds?: string[];
 }
 
 export interface Post {

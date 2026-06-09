@@ -1,11 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { env } from "@/lib/env";
-import type { PlanTier } from "@/types/db";
+import { createClient } from "@/lib/supabase/server";
+import { env, supabaseConfigured } from "@/lib/env";
 
-function getPriceId(plan: PlanTier): string | null {
+type PaidPlan = "pro" | "elite";
+
+function isPaidPlan(value: unknown): value is PaidPlan {
+  return value === "pro" || value === "elite";
+}
+
+function getPriceId(plan: PaidPlan): string | null {
   if (plan === "pro") return process.env["STRIPE_PRICE_PRO"] ?? null;
-  if (plan === "elite") return process.env["STRIPE_PRICE_ELITE"] ?? null;
-  return null;
+  return process.env["STRIPE_PRICE_ELITE"] ?? null;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -17,10 +22,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const body = (await req.json()) as { plan?: string };
-  const plan = body.plan as PlanTier | undefined;
+  if (!supabaseConfigured()) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
 
-  if (!plan || plan === "free") {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const body = (await req.json()) as { plan?: unknown };
+  const plan = body.plan;
+
+  if (!isPaidPlan(plan)) {
     return NextResponse.json({ error: "invalid_plan" }, { status: 400 });
   }
 
@@ -41,6 +59,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${appUrl}/settings?upgraded=1`,
     cancel_url: `${appUrl}/premium`,
+    client_reference_id: user.id,
+    customer_email: user.email,
+    metadata: { user_id: user.id, plan },
   });
 
   return NextResponse.json({ url: session.url });

@@ -19,7 +19,7 @@ function deltaFor(rank: number): number {
 
 export function RankRow({ profile, rank, highlight = false }: RankRowProps) {
   const tier = tierFor(profile.rp);
-  const delta = deltaFor(rank);
+  const delta = highlight ? null : deltaFor(rank);
 
   return (
     <Link
@@ -60,16 +60,18 @@ export function RankRow({ profile, rank, highlight = false }: RankRowProps) {
         >
           {rank}
         </span>
-        <span
-          style={{
-            fontSize: 10,
-            color: delta >= 0 ? "var(--profit)" : "var(--loss)",
-            fontFamily: "var(--f-mono)",
-          }}
-        >
-          {delta >= 0 ? "▲" : "▼"}
-          {Math.abs(delta)}
-        </span>
+        {delta !== null && (
+          <span
+            style={{
+              fontSize: 10,
+              color: delta >= 0 ? "var(--profit)" : "var(--loss)",
+              fontFamily: "var(--f-mono)",
+            }}
+          >
+            {delta >= 0 ? "▲" : "▼"}
+            {Math.abs(delta)}
+          </span>
+        )}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
         <Avatar user={profile} size={38} ring={rank <= 3 ? tier.color : null} />
