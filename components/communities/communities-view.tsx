@@ -6,6 +6,20 @@ import { Avatar, Button, Icon, IconButton, RankBadge } from "@/components/ui";
 import { ChatMessage } from "./chat-message";
 import { byId, me, traders } from "@/lib/data/seed";
 import { tierFor } from "@/lib/domain/tiers";
+import { useRealtimeInserts } from "@/lib/supabase/use-realtime-inserts";
+
+interface ChannelMessageRow {
+  id: string;
+  author_id: string;
+  body: string | null;
+  chart_label: string | null;
+  created_at: string;
+}
+
+function clockLabel(iso: string): string {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 
 type Pane = "rail" | "channels" | "chat" | "members";
 
@@ -29,6 +43,30 @@ export function CommunitiesView({ communities, channels, chatMessages }: Communi
   }, [activeChannel, activeCommunity, chatMessages]);
 
   const comm = communities.find((c) => c.id === activeCommunity);
+
+  // Live chat: with Supabase configured, new rows in the active channel
+  // stream in via Realtime (RLS-scoped); demo mode is untouched.
+  useRealtimeInserts<ChannelMessageRow>({
+    table: "channel_messages",
+    filter: `channel_id=eq.${activeChannel}`,
+    enabled: Boolean(activeChannel),
+    onInsert: (row) => {
+      setLocalMessages((prev) =>
+        prev.some((m) => m.id === row.id)
+          ? prev
+          : [
+              ...prev,
+              {
+                id: row.id,
+                author: row.author_id,
+                time: clockLabel(row.created_at),
+                text: row.body ?? "",
+                chart: row.chart_label ?? undefined,
+              },
+            ],
+      );
+    },
+  });
 
   function handleSelectCommunity(id: string) {
     setActiveCommunity(id);

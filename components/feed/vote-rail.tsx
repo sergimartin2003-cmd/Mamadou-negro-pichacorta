@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Icon } from "@/components/ui";
 import type { Post } from "@/types/db";
+import { votePost } from "@/lib/actions/social";
 
 interface VoteRailProps {
   post: Post;
@@ -15,7 +16,13 @@ export function VoteRail({ post, layout = "v" }: VoteRailProps) {
   const vert = layout === "v";
 
   function toggle(dir: 1 | -1) {
-    setV((prev) => (prev === dir ? 0 : dir));
+    const prev = v;
+    setV(prev === dir ? 0 : dir);
+    // Persist in the background (real with Supabase, no-op in demo);
+    // revert the optimistic state if the write fails.
+    votePost(post.id, dir).then((res) => {
+      if (!res.ok) setV(prev);
+    });
   }
 
   const displayScore =

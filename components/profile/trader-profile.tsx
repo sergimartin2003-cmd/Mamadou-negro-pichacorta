@@ -20,6 +20,7 @@ import { TradesTable } from "./trades-table";
 import { NicheCards } from "./niche-cards";
 import { getNiche } from "@/config/niches";
 import { getAchievements, type NicheStatRow } from "@/lib/data/queries";
+import { followProfile } from "@/lib/actions/social";
 
 type ProfileTab = "Posts" | "Trades" | "Stats" | "Achievements";
 type CurveRange = "1M" | "3M" | "1Y" | "All";
@@ -191,7 +192,13 @@ export function TraderProfile({
                 </button>
                 <button
                   className={`btn ${following ? "" : "primary"}`}
-                  onClick={() => setFollowing((f) => !f)}
+                  onClick={() => {
+                    const prev = following;
+                    setFollowing(!prev);
+                    followProfile(u.id).then((res) => {
+                      if (!res.ok) setFollowing(prev);
+                    });
+                  }}
                 >
                   <Icon name={following ? "check" : "plus"} size={16} sw={2.4} />
                   {following ? "Following" : "Follow"}

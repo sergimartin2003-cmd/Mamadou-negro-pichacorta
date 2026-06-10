@@ -11,6 +11,7 @@ import {
 import { getNiche } from "@/config/niches";
 import { NicheChip } from "@/components/niche/niche-chip";
 import { VoteRail } from "./vote-rail";
+import { SaveButton } from "./save-button";
 
 interface ResultBadge {
   t: "WIN" | "LOSS" | "OPEN";
@@ -174,9 +175,7 @@ export function PostCard({ post, author, nicheRp, layout = "comfortable" }: Post
           <button className="th-action" aria-label="Share post">
             <Icon name="share" size={17} /> Share
           </button>
-          <button className="th-action" aria-label="Save post">
-            <Icon name="bookmark" size={17} /> Save
-          </button>
+          <SaveButton postId={post.id} />
           <div style={{ flex: 1 }} />
           <button className="th-action" aria-label={niche.copy.postAction}>
             <Icon name="target" size={17} /> {niche.copy.postAction}

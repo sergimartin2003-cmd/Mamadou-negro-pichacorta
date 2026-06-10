@@ -1,11 +1,33 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { env } from "@/lib/env";
+import type { PlanTier } from "@/types/db";
 
 const HANDLED_EVENTS = new Set([
   "checkout.session.completed",
   "customer.subscription.updated",
   "customer.subscription.deleted",
 ]);
+
+/** Map a Stripe price id back to our plan tier via env configuration. */
+function planFromPriceId(priceId: string | undefined): PlanTier | null {
+  if (!priceId) return null;
+  if (priceId === process.env["STRIPE_PRICE_PRO"]) return "pro";
+  if (priceId === process.env["STRIPE_PRICE_ELITE"]) return "elite";
+  return null;
+}
+
+/**
+ * Resolve the current period end as ISO. Stripe moved this field between the
+ * subscription and its items across API versions, so read both defensively.
+ */
+function periodEndIso(sub: import("stripe").Stripe.Subscription): string | null {
+  const loose = sub as unknown as {
+    current_period_end?: number;
+    items?: { data?: Array<{ current_period_end?: number }> };
+  };
+  const unix = loose.current_period_end ?? loose.items?.data?.[0]?.current_period_end;
+  return unix ? new Date(unix * 1000).toISOString() : null;
+}
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const webhookSecret = env.stripeWebhookSecret();
@@ -42,46 +64,58 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   // Idempotency: record the event id first; a duplicate insert means we already handled it.
-  const { error: dedupeError } = await supabase
-    .from("stripe_events")
-    .insert({ id: event.id });
+  const { error: dedupeError } = await supabase.from("stripe_events").insert({ id: event.id });
   if (dedupeError) {
     return NextResponse.json({ received: true, duplicate: true });
   }
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as import("stripe").Stripe.Checkout.Session;
-    const customerId =
-      typeof session.customer === "string" ? session.customer : null;
+    const customerId = typeof session.customer === "string" ? session.customer : null;
     const subscriptionId =
       typeof session.subscription === "string" ? session.subscription : null;
     const userId = session.client_reference_id ?? session.metadata?.["user_id"];
+    const plan = (session.metadata?.["plan"] as PlanTier | undefined) ?? "pro";
 
+    // subscriptions PK is profile_id; never write columns that don't exist.
     if (userId && customerId && subscriptionId) {
-      await supabase.from("subscriptions").upsert({
-        user_id: userId,
-        stripe_customer_id: customerId,
-        stripe_subscription_id: subscriptionId,
-        status: "active",
-        updated_at: new Date().toISOString(),
-      });
+      await supabase.from("subscriptions").upsert(
+        {
+          profile_id: userId,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscriptionId,
+          plan,
+          status: "active",
+        },
+        { onConflict: "profile_id" },
+      );
     }
   }
 
-  if (
-    event.type === "customer.subscription.updated" ||
-    event.type === "customer.subscription.deleted"
-  ) {
+  if (event.type === "customer.subscription.updated") {
     const sub = event.data.object as import("stripe").Stripe.Subscription;
-    const customerId =
-      typeof sub.customer === "string" ? sub.customer : null;
+    const customerId = typeof sub.customer === "string" ? sub.customer : null;
     if (customerId) {
+      const plan = planFromPriceId(sub.items.data[0]?.price?.id);
       await supabase
         .from("subscriptions")
         .update({
           status: sub.status,
-          updated_at: new Date().toISOString(),
+          current_period_end: periodEndIso(sub),
+          // Only overwrite plan when the price maps to a known tier.
+          ...(plan ? { plan } : {}),
         })
+        .eq("stripe_customer_id", customerId);
+    }
+  }
+
+  if (event.type === "customer.subscription.deleted") {
+    const sub = event.data.object as import("stripe").Stripe.Subscription;
+    const customerId = typeof sub.customer === "string" ? sub.customer : null;
+    if (customerId) {
+      await supabase
+        .from("subscriptions")
+        .update({ status: sub.status, plan: "free" })
         .eq("stripe_customer_id", customerId);
     }
   }

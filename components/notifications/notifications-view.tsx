@@ -4,8 +4,27 @@ import { useState } from "react";
 import type { Notification, NotificationType } from "@/types/db";
 import { Segmented, Chip, Icon } from "@/components/ui";
 import { NotifRow } from "@/components/shell/notif";
+import { markNotificationsRead } from "@/lib/actions/social";
+import { useRealtimeInserts } from "@/lib/supabase/use-realtime-inserts";
 
 type Tab = "All" | "Mentions" | "Ranks" | "Competitions";
+
+const KNOWN_NOTIF_TYPES: NotificationType[] = [
+  "rank",
+  "like",
+  "comp",
+  "comment",
+  "follow",
+  "tier",
+];
+
+interface NotificationRow {
+  id: string;
+  actor_id: string | null;
+  type: string;
+  body: string | null;
+  read: boolean;
+}
 
 const TAB_OPTIONS: ReadonlyArray<Tab> = ["All", "Mentions", "Ranks", "Competitions"];
 
@@ -29,10 +48,35 @@ export function NotificationsView({ items }: NotificationsViewProps) {
   const [tab, setTab] = useState<Tab>("All");
   const [notifications, setNotifications] = useState<Notification[]>(items);
 
+  // Realtime: RLS only delivers the signed-in user's own rows. No-op in demo.
+  useRealtimeInserts<NotificationRow>({
+    table: "notifications",
+    onInsert: (row) => {
+      if (!KNOWN_NOTIF_TYPES.includes(row.type as NotificationType)) return;
+      setNotifications((prev) =>
+        prev.some((n) => n.id === row.id)
+          ? prev
+          : [
+              {
+                id: row.id,
+                type: row.type as NotificationType,
+                read: row.read,
+                time: "ahora",
+                text: row.body ?? "",
+                who: row.actor_id,
+              },
+              ...prev,
+            ],
+      );
+    },
+  });
+
   const filtered = filterByTab(notifications, tab);
 
   function handleMarkAllRead() {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    // Persist (real with Supabase, no-op in demo); local state stays optimistic.
+    void markNotificationsRead();
   }
 
   return (

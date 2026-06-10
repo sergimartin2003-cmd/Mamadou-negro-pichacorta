@@ -5,6 +5,7 @@ import type { Competition, Profile } from "@/types/db";
 import { Avatar } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import { joinCompetition } from "@/lib/actions/social";
 
 const KIND_COLOR: Record<string, string> = {
   Seasonal: "var(--brand)",
@@ -25,7 +26,13 @@ export function CompCard({ competition: initial, leaders }: CompCardProps) {
 
   async function handleJoin() {
     setJoined(true);
-    setMyRank(Math.floor(Math.random() * 200) + 50);
+    // New entrants start at the back of the field until scores land.
+    setMyRank(initial.participants + 1);
+    const res = await joinCompetition(initial.id);
+    if (!res.ok) {
+      setJoined(initial.joined);
+      setMyRank(initial.myRank);
+    }
   }
 
   return (

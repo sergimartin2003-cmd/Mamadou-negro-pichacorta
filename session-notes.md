@@ -129,3 +129,37 @@ perfil, postStatFields, verificación, retos, learning y comunidades semilla.
   achievements por nicho, y rebrand de los 10 perfiles base a emprendedores
   (handles afectan rutas `/u/[handle]` → con cuidado).
 ---
+
+# Session notes — 2026-06-10 · backend real (mutaciones, realtime, premium)
+
+## Qué se construyó (de prototipo visual → arquitectura real, en verde)
+- Migración `0005_niches_marketplace.sql`: enum `niche_type` (8), columnas de
+  negocio/`niche`/`metrics`/`proof_type` en posts, `user_niche_stats` (fuente de
+  verdad del ladder por nicho), `verified_metrics`/`metric_snapshots`, `bookmarks`,
+  `user_streaks`, `reports`, `quiz_questions`/`quiz_attempts`, y el marketplace
+  completo (`courses`/`course_modules`/`course_lessons`/`course_enrollments`/
+  `course_reviews`/`course_payouts`) con triggers (students_count, payout, rating)
+  + RPC `enroll_free_course` + RLS estricta en TODAS las tablas nuevas.
+- Server actions reales `lib/actions/social.ts`: `votePost` (RPC cast_vote),
+  `followProfile` (toggle_follow), `toggleBookmark`, `markNotificationsRead`,
+  `joinCompetition`, `enrollFreeCourse`. Validación zod + rate-limit + degradación
+  demo (sin claves → no-op, UI optimista). Cableadas: VoteRail, SaveButton (nuevo),
+  follow del perfil, comp-card join, notifications mark-all-read.
+- Realtime: hook `lib/supabase/use-realtime-inserts.ts` (postgres_changes, RLS,
+  no-op en demo). Activo en chat de comunidades (`channel_messages`) y en
+  notificaciones (`notifications`).
+- Premium real: `lib/auth/plan.ts` (`getPlanTier`/`planAtLeast`, lee subscriptions),
+  gate de `/teach` por plan Pro, Stripe Customer Portal `/api/stripe/portal`.
+  Webhook corregido (bug real: escribía `user_id`/`updated_at` inexistentes y no
+  guardaba `plan` → premium nunca se activaba): ahora `profile_id`, `plan` desde
+  metadata, `current_period_end` robusto entre versiones de Stripe, plan→free al
+  cancelar.
+
+## Gates: typecheck ✓ · lint ✓ · build ✓ (+/api/stripe/portal) · vitest 123/123.
+
+## Pendiente
+- DM realtime (mismo hook, falta thread_id real), persistencia de crear-post/DM,
+  quizzes UI + XP/streaks, verificación por nicho (CSV/upload/OAuth), checkout
+  Stripe de cursos (price dinámico) → enrollment, búsqueda global, moderación UI.
+- Aplicar la migración a un Supabase real y poblar `user_niche_stats` desde el seed.
+---
