@@ -49,14 +49,18 @@ export function TopBar({ me, notifications, market, onMarketChange, onOpenMenu }
         {titleForPath(pathname)}
       </h2>
 
-      <label
+      <form
+        action="/search"
         className="th-search-full"
         style={{ flex: 1, maxWidth: 440, position: "relative", alignItems: "center" }}
       >
         <Icon name="search" size={17} style={{ position: "absolute", left: 13, color: "var(--tx-3)" }} />
         <input
           className="input"
-          placeholder="Search traders, setups, communities…"
+          type="search"
+          name="q"
+          placeholder="Busca emprendedores, posts, cursos…"
+          aria-label="Búsqueda global"
           style={{ paddingLeft: 38, height: 38, background: "var(--bg-2)" }}
         />
         <kbd
@@ -73,11 +77,11 @@ export function TopBar({ me, notifications, market, onMarketChange, onOpenMenu }
         >
           /
         </kbd>
-      </label>
+      </form>
 
-      <button className="th-iconbtn th-search-icon" aria-label="Search">
+      <Link href="/search" className="th-iconbtn th-search-icon" aria-label="Buscar">
         <Icon name="search" size={19} />
-      </button>
+      </Link>
 
       <div style={{ flex: 1 }} />
 

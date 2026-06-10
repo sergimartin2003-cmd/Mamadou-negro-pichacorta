@@ -7,6 +7,7 @@ import { ChatMessage } from "./chat-message";
 import { byId, me, traders } from "@/lib/data/seed";
 import { tierFor } from "@/lib/domain/tiers";
 import { useRealtimeInserts } from "@/lib/supabase/use-realtime-inserts";
+import { sendChannelMessage } from "@/lib/actions/social";
 
 interface ChannelMessageRow {
   id: string;
@@ -89,6 +90,10 @@ export function CommunitiesView({ communities, channels, chatMessages }: Communi
     };
     setLocalMessages((prev) => [...prev, optimistic]);
     setDraft("");
+    // Persist (real with Supabase, no-op in demo); drop the bubble on failure.
+    sendChannelMessage(activeChannel, text).then((res) => {
+      if (!res.ok) setLocalMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
+    });
   }
 
   const onlineTraders = traders.slice(0, 5);

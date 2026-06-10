@@ -88,6 +88,9 @@ export async function createPost(input: unknown): Promise<CreatePostResult> {
       rr: parsed.data.rr,
       dir: parsed.data.dir,
       market: MARKET_ENUM[parsed.data.market],
+      // The setup composer is the trading form; the shared feed tags the
+      // post with its niche (other niches publish via their own post types).
+      niche: "trading",
       result: "open",
     })
     .select("id")

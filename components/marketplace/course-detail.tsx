@@ -6,6 +6,7 @@ import { NicheChip } from "@/components/niche/niche-chip";
 import { byId } from "@/lib/data/seed";
 import { Stars } from "./stars";
 import { CourseCard } from "./course-card";
+import { BuyButton } from "./buy-button";
 
 interface CourseDetailProps {
   course: Course;
@@ -199,14 +200,7 @@ export function CourseDetail({ course, modules, reviews, related }: CourseDetail
               )}
             </div>
 
-            <Link href={`/marketplace/${course.slug}/learn`} className="btn primary" style={{ width: "100%", justifyContent: "center" }}>
-              {course.price === 0 ? "Empezar gratis" : "Acceder al curso"}
-            </Link>
-            {course.price > 0 && (
-              <p style={{ fontSize: 11.5, color: "var(--tx-4)", textAlign: "center", marginTop: 8 }}>
-                Pago con Stripe — se activa al configurar las claves.
-              </p>
-            )}
+            <BuyButton courseId={course.id} slug={course.slug} price={course.price} />
 
             <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
               <div className="sec-label" style={{ fontSize: 10 }}>Este curso incluye</div>

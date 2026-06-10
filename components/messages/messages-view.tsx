@@ -5,6 +5,22 @@ import type { Dm, DmMessage, Profile } from "@/types/db";
 import { Avatar, Button, Icon, IconButton, VerifiedTick } from "@/components/ui";
 import { getDmThread } from "@/lib/data/queries";
 import { byId } from "@/lib/data/seed";
+import { sendDm } from "@/lib/actions/social";
+import { useRealtimeInserts } from "@/lib/supabase/use-realtime-inserts";
+
+interface DmMessageRow {
+  id: string;
+  thread_id: string;
+  author_id: string;
+  body: string | null;
+  file_name: string | null;
+  created_at: string;
+}
+
+function dmClock(iso: string): string {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 
 interface MessagesViewProps {
   dms: Dm[];
@@ -40,12 +56,36 @@ export function MessagesView({ dms, me }: MessagesViewProps) {
     setMobilePane("thread");
   }
 
+  // Incoming DMs stream in live (RLS scopes to participants; demo no-op).
+  // Own rows are skipped — the optimistic bubble already rendered them.
+  useRealtimeInserts<DmMessageRow>({
+    table: "dm_messages",
+    filter: `thread_id=eq.${activeId}`,
+    enabled: Boolean(activeId),
+    onInsert: (row) => {
+      if (row.author_id === me.id) return;
+      setLocalThread((prev) => [
+        ...prev,
+        {
+          from: row.author_id,
+          time: dmClock(row.created_at),
+          text: row.body ?? "",
+          file: row.file_name ?? undefined,
+        },
+      ]);
+    },
+  });
+
   function handleSend() {
     const text = draft.trim();
     if (!text || !activeDm) return;
     const optimistic: DmMessage = { from: "me", time: "just now", text };
     setLocalThread((prev) => [...prev, optimistic]);
     setDraft("");
+    // Persist (real with Supabase, no-op in demo); drop the bubble on failure.
+    sendDm(activeId, text).then((res) => {
+      if (!res.ok) setLocalThread((prev) => prev.filter((m) => m !== optimistic));
+    });
   }
 
   return (

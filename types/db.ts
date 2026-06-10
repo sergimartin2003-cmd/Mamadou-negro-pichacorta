@@ -191,6 +191,17 @@ export interface Notification {
   who: string | null;
 }
 
+export interface Comment {
+  id: string;
+  postId: string;
+  author: string;
+  /** Parent comment id for threaded replies (one level deep in the UI). */
+  parentId: string | null;
+  body: string;
+  time: string;
+  up: number;
+}
+
 export interface Dm {
   id: string;
   who: string;

@@ -71,10 +71,28 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as import("stripe").Stripe.Checkout.Session;
+    const userId = session.client_reference_id ?? session.metadata?.["user_id"];
+
+    // Course purchase → enrollment (the DB trigger bumps students_count and
+    // creates the instructor payout at the course's payout_rate).
+    if (session.metadata?.["kind"] === "course") {
+      const courseId = session.metadata?.["course_id"];
+      const price = Number(session.metadata?.["price"] ?? 0);
+      if (userId && courseId) {
+        await supabase
+          .from("course_enrollments")
+          .upsert(
+            { profile_id: userId, course_id: courseId, price_paid: price },
+            { onConflict: "profile_id,course_id", ignoreDuplicates: true },
+          );
+      }
+      return NextResponse.json({ received: true });
+    }
+
+    // Subscription purchase → plan activation.
     const customerId = typeof session.customer === "string" ? session.customer : null;
     const subscriptionId =
       typeof session.subscription === "string" ? session.subscription : null;
-    const userId = session.client_reference_id ?? session.metadata?.["user_id"];
     const plan = (session.metadata?.["plan"] as PlanTier | undefined) ?? "pro";
 
     // subscriptions PK is profile_id; never write columns that don't exist.

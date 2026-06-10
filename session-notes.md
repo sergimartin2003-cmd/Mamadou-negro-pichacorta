@@ -163,3 +163,33 @@ perfil, postStatFields, verificación, retos, learning y comunidades semilla.
   Stripe de cursos (price dinámico) → enrollment, búsqueda global, moderación UI.
 - Aplicar la migración a un Supabase real y poblar `user_niche_stats` desde el seed.
 ---
+
+# Session notes — 2026-06-10 (B) · funcionalidad completa + going-live
+
+## Qué se construyó (todo real-con-claves / demo-sin-claves, en verde)
+- Comentarios con threading: tipo Comment, seed determinista, getComments,
+  CommentsSection (colapsable, composer, respuestas 1 nivel) integrada en
+  PostCard envolviendo la fila de acciones; addComment server action.
+- Chat/DM persistentes: sendChannelMessage y sendDm + realtime de DMs
+  (dm_messages filtrado por thread, skip de filas propias). Comunidades ya
+  tenía realtime; ahora también persiste el envío.
+- Stripe de cursos: /api/stripe/checkout/course (precio leído server-side,
+  metadata kind=course) + rama del webhook → course_enrollments (trigger crea
+  payout y students_count). BuyButton (gratis→RPC+player; pago→Checkout;
+  demo→aviso y player).
+- Quizzes + XP/streaks: banco de 24 preguntas reales (3 por nicho) en
+  quiz-seed, QuizCard en LessonView (corrección, +XP), recordQuizCompletion
+  (award_xp RPC + upsert user_streaks con lógica de racha diaria).
+- Verificación CSV por nicho: NicheVerify en Ajustes→Cuentas conectadas →
+  verifyNicheMetrics (upsert verified_metrics fuente csv + user_niche_stats
+  verified). Reportes: PostMenu (⋯ → reportar) → tabla reports.
+- Búsqueda global: /search (perfiles+posts+cursos) + buscador del topbar como
+  form GET. create-post ahora etiqueta niche=trading.
+- GOING-LIVE.md: tabla de 13 claves + guía paso a paso (Supabase, Stripe,
+  Vercel, PostHog, Upstash) + checklist de lanzamiento.
+
+## Gates: typecheck ✓ · lint ✓ (0 errores) · build ✓ (+/search, +checkout/course) · vitest 123/123.
+
+## Pendiente explícito (documentado en GOING-LIVE §4)
+Lecturas reales desde Supabase (escrituras ya lo son), OAuth de verificación,
+email/push, Storage de imágenes, panel de moderación, E2E, crons.

@@ -6,6 +6,7 @@ import type {
   Achievement,
   ChatMessage,
   Channel,
+  Comment,
   Community,
   Competition,
   Course,
@@ -47,6 +48,7 @@ import {
 } from "./niche-seed";
 
 import { courses, buildModulesForCourse, buildReviewsForCourse } from "./courses-seed";
+import { commentsForPost } from "./comments-seed";
 
 export type { NicheStatRow } from "./niche-seed";
 
@@ -286,6 +288,52 @@ export function courseSlugs(): string[] {
 
 export async function getCoursesByInstructor(instructorId: string): Promise<Course[]> {
   return courses.filter((c) => c.instructorId === instructorId);
+}
+
+export async function getComments(postId: string): Promise<Comment[]> {
+  return commentsForPost(postId);
+}
+
+// --- Búsqueda global ---------------------------------------------------------
+
+export interface SearchResults {
+  profiles: Profile[];
+  posts: Post[];
+  courses: Course[];
+}
+
+/** Case-insensitive search across the shared social graph + marketplace. */
+export async function searchAll(q: string): Promise<SearchResults> {
+  const query = q.trim().toLowerCase();
+  if (!query) return { profiles: [], posts: [], courses: [] };
+
+  const allPosts = [...posts, ...crossNichePosts];
+  return {
+    profiles: [...traders, seedMe]
+      .filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.handle.toLowerCase().includes(query) ||
+          p.bio.toLowerCase().includes(query),
+      )
+      .slice(0, 8),
+    posts: allPosts
+      .filter(
+        (p) =>
+          p.title.toLowerCase().includes(query) ||
+          p.body.toLowerCase().includes(query) ||
+          p.tags.some((t) => t.toLowerCase().includes(query)),
+      )
+      .slice(0, 10),
+    courses: courses
+      .filter(
+        (c) =>
+          c.title.toLowerCase().includes(query) ||
+          c.tagline.toLowerCase().includes(query) ||
+          c.tags.some((t) => t.toLowerCase().includes(query)),
+      )
+      .slice(0, 6),
+  };
 }
 
 export async function getLessons(pathId: string): Promise<Lesson[]> {

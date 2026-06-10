@@ -10,6 +10,7 @@ import {
   type SaveProfileInput,
   type ActionResult,
 } from "@/app/(app)/settings/actions";
+import { NicheVerify } from "./niche-verify";
 
 interface SettingsViewProps {
   profile: Profile;
@@ -506,6 +507,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
                 )}
               </Row>
             ))}
+            <NicheVerify />
           </div>
         )}
 

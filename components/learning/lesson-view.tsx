@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui/icon";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import type { LearningPath, Lesson } from "@/types/db";
+import { QuizCard } from "./quiz-card";
 
 interface LessonViewProps {
   path: LearningPath;
@@ -128,6 +129,9 @@ export function LessonView({ path, lessons, onBack }: LessonViewProps) {
             </Button>
           </div>
         </div>
+
+        {/* end-of-path quiz: earn XP + keep the streak */}
+        <QuizCard niche={path.niche} pathId={path.id} />
       </div>
     </div>
   );

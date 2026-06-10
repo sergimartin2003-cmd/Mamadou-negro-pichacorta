@@ -6,12 +6,13 @@ import {
   VerifiedTick,
   ChartFrame,
   Icon,
-  IconButton,
 } from "@/components/ui";
 import { getNiche } from "@/config/niches";
 import { NicheChip } from "@/components/niche/niche-chip";
 import { VoteRail } from "./vote-rail";
 import { SaveButton } from "./save-button";
+import { CommentsSection } from "./comments-section";
+import { PostMenu } from "./post-menu";
 
 interface ResultBadge {
   t: "WIN" | "LOSS" | "OPEN";
@@ -108,7 +109,7 @@ export function PostCard({ post, author, nicheRp, layout = "comfortable" }: Post
               {rb.t}
             </span>
           )}
-          <IconButton icon="ellipsis" size="sm" aria-label="Post options" />
+          <PostMenu postId={post.id} />
         </div>
 
         {/* title + body */}
@@ -166,21 +167,17 @@ export function PostCard({ post, author, nicheRp, layout = "comfortable" }: Post
           ))}
         </div>
 
-        {/* actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--tx-3)" }}>
-          <button className="th-action" aria-label="View comments">
-            <Icon name="comment" size={17} />
-            <span className="mono">{post.comments}</span>
-          </button>
-          <button className="th-action" aria-label="Share post">
-            <Icon name="share" size={17} /> Share
+        {/* actions + threaded comments */}
+        <CommentsSection postId={post.id} count={post.comments}>
+          <button className="th-action" aria-label="Compartir post">
+            <Icon name="share" size={17} /> Compartir
           </button>
           <SaveButton postId={post.id} />
           <div style={{ flex: 1 }} />
           <button className="th-action" aria-label={niche.copy.postAction}>
             <Icon name="target" size={17} /> {niche.copy.postAction}
           </button>
-        </div>
+        </CommentsSection>
       </div>
     </article>
   );
