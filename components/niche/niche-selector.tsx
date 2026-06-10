@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { NicheSlug } from "@/types/db";
 import { NICHE_LIST } from "@/config/niches";
 
-type NicheSection = "rankings" | "competitions" | "learning";
+type NicheSection = "rankings" | "retos" | "academy";
 
 interface NicheSelectorProps {
   section: NicheSection;

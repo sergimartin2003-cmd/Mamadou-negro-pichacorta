@@ -161,7 +161,7 @@ export function CompetitionsView({ competitions, traders, header }: Competitions
           onChange={(k) => setTab(k as TabOption)}
         />
         <div style={{ flex: 1 }} />
-        <Link href="/competitions/create">
+        <Link href="/retos/create">
           <Button variant="primary">
             <Icon name="plus" size={16} sw={2.4} /> Create competition
           </Button>
@@ -180,7 +180,7 @@ export function CompetitionsView({ competitions, traders, header }: Competitions
         ))}
 
         <Link
-          href="/competitions/create"
+          href="/retos/create"
           style={{
             border: "1.5px dashed var(--line-3)",
             borderRadius: "var(--r-lg)",

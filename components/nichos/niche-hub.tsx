@@ -18,8 +18,8 @@ interface NicheHubProps {
 
 const QUICK_LINKS: { href: (slug: string) => string; label: string; icon: IconName }[] = [
   { href: (s) => `/rankings/${s}`, label: "Ranking", icon: "trophy" },
-  { href: (s) => `/competitions/${s}`, label: "Retos", icon: "swords" },
-  { href: (s) => `/learning/${s}`, label: "Academia", icon: "book" },
+  { href: (s) => `/retos/${s}`, label: "Retos", icon: "swords" },
+  { href: (s) => `/academy/${s}`, label: "Academia", icon: "book" },
   { href: () => `/marketplace`, label: "Cursos", icon: "play" },
 ];
 

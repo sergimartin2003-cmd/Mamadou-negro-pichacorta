@@ -98,7 +98,7 @@ export default function CreateCompetitionPage() {
       return;
     }
 
-    router.push("/competitions");
+    router.push("/retos");
   }
 
   return (
@@ -245,7 +245,7 @@ export default function CreateCompetitionPage() {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => router.push("/competitions")}
+            onClick={() => router.push("/retos")}
             style={{ flex: 1 }}
           >
             Cancel

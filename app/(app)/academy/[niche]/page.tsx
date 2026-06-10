@@ -23,7 +23,7 @@ export default async function LearningNichePage({ params }: LearningNichePagePro
     <LearningHub
       paths={paths}
       lessons={lessons}
-      header={<NicheSelector section="learning" active={niche} />}
+      header={<NicheSelector section="academy" active={niche} />}
     />
   );
 }

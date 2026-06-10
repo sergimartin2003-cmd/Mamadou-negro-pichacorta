@@ -121,7 +121,7 @@ export function RightPanel({ topTraders, suggested }: RightPanelProps) {
         <div style={{ fontSize: 12.5, color: "var(--tx-3)", marginBottom: 12 }}>
           You&apos;re <span className="mono" style={{ color: "var(--tx-1)" }}>#142</span> of 4,820 · ends in 6d
         </div>
-        <Link href="/competitions">
+        <Link href="/retos">
           <Button variant="primary" size="sm" block>
             View standings
           </Button>

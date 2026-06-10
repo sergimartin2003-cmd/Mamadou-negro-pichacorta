@@ -25,7 +25,7 @@ export default async function CompetitionsNichePage({ params }: CompetitionsNich
     <CompetitionsView
       competitions={competitions}
       traders={traders}
-      header={<NicheSelector section="competitions" active={niche} />}
+      header={<NicheSelector section="retos" active={niche} />}
     />
   );
 }
