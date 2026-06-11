@@ -174,6 +174,65 @@ export async function enrollFreeCourse(courseId: string): Promise<ActionResult> 
   return error ? failed(error.message) : { ok: true, persisted: true };
 }
 
+const communityNameSchema = z.string().trim().min(2, "El nombre es demasiado corto.").max(60);
+
+/** Create a community (server) with a default #general channel + owner membership. */
+export async function createCommunity(
+  name: string,
+  description?: string,
+): Promise<ActionResult & { id?: string }> {
+  const parsed = communityNameSchema.safeParse(name);
+  if (!parsed.success) {
+    return { ok: false, error: "validation", message: parsed.error.issues[0].message };
+  }
+  if (!supabaseConfigured()) return { ok: true, persisted: false };
+
+  const ctx = await clientWithUser();
+  if (!ctx) {
+    return { ok: false, error: "not_authenticated", message: "Inicia sesión para crear una comunidad." };
+  }
+  const limited = await rateLimit(`create-community:${ctx.user.id}`, {
+    limit: 5,
+    windowMs: WRITE_WINDOW_MS,
+  });
+  if (!limited.success) {
+    return { ok: false, error: "rate_limited", message: "Demasiadas comunidades seguidas, espera un momento." };
+  }
+
+  const { supabase, user } = ctx;
+  const base = parsed.data
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40);
+  const slug = `${base || "comunidad"}-${Date.now().toString(36).slice(-4)}`;
+
+  const { data, error } = await supabase
+    .from("communities")
+    .insert({
+      slug,
+      name: parsed.data,
+      description: (description ?? "").trim().slice(0, 200),
+      owner_id: user.id,
+      color: "var(--brand)",
+      icon: "◇",
+    })
+    .select("id")
+    .single();
+  if (error || !data) {
+    return failed(error?.message ?? "No se pudo crear la comunidad.");
+  }
+
+  await supabase.from("channels").insert({ community_id: data.id, name: "general", kind: "text", position: 0 });
+  await supabase
+    .from("community_members")
+    .insert({ community_id: data.id, profile_id: user.id, role: "admin" });
+
+  return { ok: true, persisted: true, id: data.id as string };
+}
+
 const bodySchema = z.string().trim().min(1, "Escribe algo.").max(2000);
 
 /** Add a comment (optionally threaded under `parentId`). */

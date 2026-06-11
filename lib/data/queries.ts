@@ -23,6 +23,7 @@ import type {
   Profile,
 } from "@/types/db";
 import { NICHE_SLUGS } from "@/config/niches";
+import { supabaseConfigured } from "@/lib/env";
 import {
   achievements,
   byId,
@@ -73,7 +74,34 @@ export interface CompetitionFilter {
 }
 
 export async function getMe(): Promise<Profile> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetMe } = await import("./supabase-reads");
+      const me = await realGetMe();
+      if (me) return me;
+    } catch {
+      // fall through to seed
+    }
+  }
   return seedMe;
+}
+
+/** Resolve a set of profile ids to a map (real → Supabase, demo → seed). */
+export async function getProfilesByIds(ids: string[]): Promise<Record<string, Profile>> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetProfilesByIds } = await import("./supabase-reads");
+      return await realGetProfilesByIds(ids);
+    } catch {
+      // fall through to seed
+    }
+  }
+  const map: Record<string, Profile> = {};
+  for (const id of ids) {
+    const profile = byId[id];
+    if (profile) map[id] = profile;
+  }
+  return map;
 }
 
 /** Convert a relative time label ("14m", "1h", "2d") to minutes for ordering. */
@@ -86,6 +114,18 @@ function recencyRank(time: string): number {
 }
 
 export async function getFeed(opts: FeedOptions = {}): Promise<Post[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetFeed } = await import("./supabase-reads");
+      const real = await realGetFeed(opts.niche);
+      return opts.sort === "top"
+        ? [...real].sort((a, b) => engagement(b) - engagement(a))
+        : real;
+    } catch {
+      // fall through to seed
+    }
+  }
+
   // One shared feed: trading seed + cross-niche posts, ordered most-recent first.
   let result = [...posts, ...crossNichePosts].sort(
     (a, b) => recencyRank(a.time) - recencyRank(b.time),
@@ -111,6 +151,15 @@ export async function getFeed(opts: FeedOptions = {}): Promise<Post[]> {
 }
 
 export async function getProfile(idOrHandle: string): Promise<Profile | null> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetProfile } = await import("./supabase-reads");
+      return await realGetProfile(idOrHandle);
+    } catch {
+      // fall through to seed
+    }
+  }
+
   const byKey = byId[idOrHandle];
   if (byKey) return byKey;
 
@@ -137,15 +186,39 @@ export async function getRankings(opts: RankingsOptions = {}): Promise<Profile[]
 }
 
 export async function getCommunities(): Promise<Community[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetCommunities } = await import("./supabase-reads");
+      return await realGetCommunities();
+    } catch {
+      // fall through to seed
+    }
+  }
   return [...communities];
 }
 
 export async function getChannels(communityId: string): Promise<Channel[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetChannels } = await import("./supabase-reads");
+      return await realGetChannels(communityId);
+    } catch {
+      // fall through to seed
+    }
+  }
   void communityId;
   return [...channels];
 }
 
 export async function getChatMessages(channelId: string): Promise<ChatMessage[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetChatMessages } = await import("./supabase-reads");
+      return await realGetChatMessages(channelId);
+    } catch {
+      // fall through to seed
+    }
+  }
   void channelId;
   return [...chatMsgs];
 }
@@ -346,6 +419,14 @@ export async function getAchievements(): Promise<Achievement[]> {
 }
 
 export async function getNotifications(): Promise<Notification[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetNotifications } = await import("./supabase-reads");
+      return await realGetNotifications();
+    } catch {
+      // fall through to seed
+    }
+  }
   return [...notifications];
 }
 

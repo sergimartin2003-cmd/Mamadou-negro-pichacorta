@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { ChatMessage as ChatMessageType, Channel, Community } from "@/types/db";
 import { Avatar, Button, Icon, IconButton, RankBadge } from "@/components/ui";
 import { ChatMessage } from "./chat-message";
@@ -123,7 +124,9 @@ export function CommunitiesView({ communities, channels, chatMessages }: Communi
           }}
         >
           <span className="sec-label">Your communities</span>
-          <IconButton icon="plus" size="sm" iconSize={16} />
+          <Link href="/communities/new" className="th-iconbtn sm" aria-label="Crear comunidad">
+            <Icon name="plus" size={16} sw={1.8} />
+          </Link>
         </div>
         <div className="scroll" style={{ flex: 1, padding: "0 10px" }}>
           {communities.map((c) => {

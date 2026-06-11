@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getNiche, isNicheSlug, NICHE_SLUGS } from "@/config/niches";
-import { getFeed, getNicheLeaderboard, getNicheRp, getCourses } from "@/lib/data/queries";
+import { getFeed, getNicheLeaderboard, getNicheRp, getCourses, getProfilesByIds } from "@/lib/data/queries";
 import { byId } from "@/lib/data/seed";
 import { NicheHub } from "@/components/nichos/niche-hub";
 
@@ -24,9 +24,7 @@ export default async function NicheHubPage({ params }: NicheHubPageProps) {
   ]);
 
   const authorIds = [...new Set(posts.map((p) => p.author))];
-  const authors = Object.fromEntries(
-    authorIds.map((id) => [id, byId[id]]).filter(([, v]) => v != null),
-  );
+  const authors = await getProfilesByIds(authorIds);
   const rpEntries = await Promise.all(
     posts.map(
       async (post) =>
