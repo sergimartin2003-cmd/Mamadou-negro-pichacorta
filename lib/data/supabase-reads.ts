@@ -438,3 +438,55 @@ export async function realGetTopProfiles(n: number, offset = 0): Promise<Profile
     .range(offset, offset + Math.max(0, n) - 1);
   return ((data ?? []) as ProfileRow[]).map(mapProfile);
 }
+
+// --- global search -----------------------------------------------------------
+
+export async function realSearchAll(
+  q: string,
+): Promise<{ profiles: Profile[]; posts: Post[]; courses: import("@/types/db").Course[] }> {
+  const query = q.trim();
+  if (!query) return { profiles: [], posts: [], courses: [] };
+  // Sanitize for PostgREST .or() (commas/parens/% are operators there).
+  const safe = query.replace(/[%,().]/g, " ").trim();
+  if (!safe) return { profiles: [], posts: [], courses: [] };
+  const like = `%${safe}%`;
+  const supabase = await sb();
+
+  const [profilesRes, postsRes] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select(PROFILE_SELECT)
+      .or(`handle.ilike.${like},display_name.ilike.${like},bio.ilike.${like}`)
+      .limit(8),
+    supabase
+      .from("posts")
+      .select("*")
+      .or(`title.ilike.${like},body.ilike.${like},symbol.ilike.${like}`)
+      .order("created_at", { ascending: false })
+      .limit(10),
+  ]);
+
+  const profiles = ((profilesRes.data ?? []) as ProfileRow[]).map(mapProfile);
+  const posts = ((postsRes.data ?? []) as PostRow[]).map((r) => ({
+    id: r.id,
+    author: r.author_id,
+    time: rel(r.created_at),
+    niche: (r.niche as Post["niche"]) ?? "trading",
+    market: (r.market as Market) ?? "Crypto",
+    dir: r.dir ?? "long",
+    symbol: r.symbol ?? "—",
+    title: r.title ?? "",
+    body: r.body ?? "",
+    rr: r.rr ?? 0,
+    pnl: r.pnl ?? 0,
+    result: r.result ?? "open",
+    tags: [],
+    up: r.upvotes ?? 0,
+    down: r.downvotes ?? 0,
+    comments: r.comments_count ?? 0,
+    chart: r.chart_label ?? "",
+  }));
+
+  // Course catalog arrives with the content phase; empty until then.
+  return { profiles, posts, courses: [] };
+}

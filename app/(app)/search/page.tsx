@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { searchAll, getNicheRp } from "@/lib/data/queries";
+import { searchAll, getNicheRp, getProfilesByIds } from "@/lib/data/queries";
 import { byId } from "@/lib/data/seed";
 import { Avatar, RankBadge, VerifiedTick } from "@/components/ui";
 import { PostCard } from "@/components/feed/post-card";
@@ -15,10 +15,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { profiles, posts, courses } = await searchAll(query);
   const total = profiles.length + posts.length + courses.length;
 
+  const authors = await getProfilesByIds([...new Set(posts.map((p) => p.author))]);
   const nicheRpEntries = await Promise.all(
     posts.map(
       async (post) =>
-        [post.id, (await getNicheRp(post.author, post.niche)) ?? byId[post.author]?.rp ?? 0] as const,
+        [post.id, (await getNicheRp(post.author, post.niche)) ?? authors[post.author]?.rp ?? 0] as const,
     ),
   );
   const nicheRpByPost = Object.fromEntries(nicheRpEntries);
@@ -88,7 +89,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <section style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div className="sec-label">Posts</div>
           {posts.map((post) => {
-            const author = byId[post.author];
+            const author = authors[post.author] ?? byId[post.author];
             if (!author) return null;
             return (
               <PostCard key={post.id} post={post} author={author} nicheRp={nicheRpByPost[post.id]} layout="compact" />

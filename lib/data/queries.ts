@@ -437,6 +437,15 @@ export async function searchAll(q: string): Promise<SearchResults> {
   const query = q.trim().toLowerCase();
   if (!query) return { profiles: [], posts: [], courses: [] };
 
+  if (supabaseConfigured()) {
+    try {
+      const { realSearchAll } = await import("./supabase-reads");
+      return await realSearchAll(q);
+    } catch {
+      // fall through to seed
+    }
+  }
+
   const allPosts = [...posts, ...crossNichePosts];
   return {
     profiles: [...traders, seedMe]
