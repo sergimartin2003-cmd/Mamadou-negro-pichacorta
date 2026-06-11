@@ -37,12 +37,24 @@ export function Avatar({ user, size = 40, ring = null, showStatus = false }: Ava
           height: size,
           fontSize: size * 0.36,
           background: `linear-gradient(135deg, ${from}, ${to})`,
+          overflow: "hidden",
           boxShadow: ring
             ? `0 0 0 2px var(--bg-2), 0 0 0 ${Math.max(2, size * 0.05)}px ${ring}`
             : "none",
         }}
       >
-        {initialsFor(resolved.name)}
+        {resolved.avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={resolved.avatarUrl}
+            alt=""
+            width={size}
+            height={size}
+            style={{ width: size, height: size, objectFit: "cover", display: "block" }}
+          />
+        ) : (
+          initialsFor(resolved.name)
+        )}
       </div>
       {showStatus && (
         <span

@@ -38,7 +38,7 @@ solo: auth, base de datos, realtime, pagos y analytics.
    - `service_role` (pulsa *Reveal*) → `SUPABASE_SERVICE_ROLE_KEY`.
      ⚠️ La service_role **nunca** va en el cliente ni en un repo público.
 4. Aplica el schema: **SQL Editor → New query** y ejecuta EN ORDEN el contenido de
-   `supabase/migrations/0001…0006` (uno por uno). Después `supabase/seed.sql` si
+   `supabase/migrations/0001…0007` (uno por uno). Después `supabase/seed.sql` si
    quieres contenido inicial.
 5. Activa Realtime: **Database → Replication → supabase_realtime** y añade las
    tablas `channel_messages`, `dm_messages`, `notifications`.
@@ -88,7 +88,7 @@ solo: auth, base de datos, realtime, pagos y analytics.
 
 ## 3 · Checklist final antes de lanzar
 
-- [ ] Migraciones 0001–0006 aplicadas en Supabase sin errores.
+- [ ] Migraciones 0001–0007 aplicadas en Supabase sin errores.
 - [ ] Realtime activado en `channel_messages`, `dm_messages`, `notifications`.
 - [ ] Variables en Vercel (Production) y redeploy hecho.
 - [ ] Webhook de Stripe apuntando al dominio final y firma verificada
@@ -100,10 +100,16 @@ solo: auth, base de datos, realtime, pagos y analytics.
 
 ## 4 · Qué queda fuera de esta versión (siguiente iteración)
 
-- Lectura real de Supabase en las queries de lectura (hoy: seed también con
-  claves; las ESCRITURAS sí son reales) y poblar `user_niche_stats` desde el seed.
+- **Contenido**: catálogo de cursos, rutas de aprendizaje y definiciones de retos
+  (el esquema y la capa de lectura ya están listos; solo falta meter el contenido).
 - Integraciones OAuth de verificación (Stripe Connect, Meta/Google Ads, broker,
   wallet) — el import CSV ya escribe en `verified_metrics`.
 - Email transaccional (Resend/SendGrid) y Web Push.
-- Subida de avatar/imágenes a Storage; moderación con panel de admin.
+- Subida de imágenes de posts/cursos a Storage (el avatar ya sube al bucket
+  `avatars`); moderación con panel de admin.
 - E2E (Playwright) y cron de temporadas/benchmarks.
+
+Nota: las **escrituras** y las **lecturas de datos de usuario** (perfil, feed,
+posts, comunidades, chat, DMs, notificaciones, rankings, búsqueda) ya son reales
+con claves; cae a seed solo si una query fallara, así que valida una vez contra
+tu Supabase.

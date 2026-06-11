@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Post, Profile, NicheSlug } from "@/types/db";
 import { Segmented, Icon } from "@/components/ui";
 import { NICHE_LIST } from "@/config/niches";
+import { useUiStore } from "@/lib/store/ui";
 import { PostCard } from "./post-card";
 import { ComposerStrip } from "./composer-strip";
 
@@ -62,7 +63,13 @@ function filterPosts(
 export function FeedClient({ posts, authors, me, nicheRpByPost }: FeedClientProps) {
   const [scope, setScope] = useState<Scope>("For you");
   const [sort, setSort] = useState<Sort>("Trending");
-  const [layout, setLayout] = useState<Layout>("comfortable");
+  // Density persists via the Zustand UI store; gate on mount so SSR and the
+  // first client render agree (default), then apply the persisted value.
+  const feedDensity = useUiStore((s) => s.feedDensity);
+  const toggleFeedDensity = useUiStore((s) => s.toggleFeedDensity);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const layout: Layout = mounted ? feedDensity : "comfortable";
   const [niche, setNiche] = useState<NicheFilter>("all");
 
   const visible = filterPosts(posts, scope, sort, niche, me.followingIds ?? []);
@@ -76,7 +83,7 @@ export function FeedClient({ posts, authors, me, nicheRpByPost }: FeedClientProp
         <Segmented options={SORT_OPTIONS} value={sort} onChange={(k) => setSort(k as Sort)} size="sm" />
         <button
           className="th-iconbtn"
-          onClick={() => setLayout((l) => (l === "compact" ? "comfortable" : "compact"))}
+          onClick={toggleFeedDensity}
           title="Toggle density"
           aria-label="Toggle density"
         >

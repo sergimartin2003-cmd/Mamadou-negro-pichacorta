@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { Icon } from "@/components/ui/icon";
-import { Avatar } from "@/components/ui/avatar";
 import type { Profile } from "@/types/db";
 import {
   saveProfile,
@@ -11,6 +10,7 @@ import {
   type ActionResult,
 } from "@/app/(app)/settings/actions";
 import { NicheVerify } from "./niche-verify";
+import { AvatarUploader } from "./avatar-uploader";
 
 interface SettingsViewProps {
   profile: Profile;
@@ -234,28 +234,7 @@ export function SettingsView({ profile }: SettingsViewProps) {
             <p style={{ color: "var(--tx-3)", fontSize: 13, marginBottom: 20 }}>
               Así te ven los demás en EmprendeHub.
             </p>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-                marginBottom: 20,
-              }}
-            >
-              <Avatar user={profile} size={72} ring="var(--brand)" />
-              <div>
-                <button className="btn sm">Change avatar</button>
-                <div
-                  style={{
-                    fontSize: 11.5,
-                    color: "var(--tx-4)",
-                    marginTop: 6,
-                  }}
-                >
-                  PNG or JPG, max 4MB
-                </div>
-              </div>
-            </div>
+            <AvatarUploader profile={profile} />
             <div
               style={{
                 display: "grid",

@@ -174,6 +174,27 @@ export async function enrollFreeCourse(courseId: string): Promise<ActionResult> 
   return error ? failed(error.message) : { ok: true, persisted: true };
 }
 
+const avatarUrlSchema = z.string().url().max(600);
+
+/** Persist the signed-in user's uploaded avatar URL (Storage path is public). */
+export async function saveAvatarUrl(url: string): Promise<ActionResult> {
+  const parsed = avatarUrlSchema.safeParse(url);
+  if (!parsed.success) {
+    return { ok: false, error: "validation", message: "URL de avatar inválida." };
+  }
+  if (!supabaseConfigured()) return { ok: true, persisted: false };
+
+  const ctx = await clientWithUser();
+  if (!ctx) {
+    return { ok: false, error: "not_authenticated", message: "Inicia sesión de nuevo." };
+  }
+  const { error } = await ctx.supabase
+    .from("profiles")
+    .update({ avatar_url: parsed.data })
+    .eq("id", ctx.user.id);
+  return error ? failed(error.message) : { ok: true, persisted: true };
+}
+
 const communityNameSchema = z.string().trim().min(2, "El nombre es demasiado corto.").max(60);
 
 /** Create a community (server) with a default #general channel + owner membership. */

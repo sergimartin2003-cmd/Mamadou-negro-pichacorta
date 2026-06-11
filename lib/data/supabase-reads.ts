@@ -69,6 +69,7 @@ interface ProfileRow {
   verified: boolean;
   avatar_from: string | null;
   avatar_to: string | null;
+  avatar_url: string | null;
   rp: number;
   followers_count: number;
   following_count: number;
@@ -93,6 +94,7 @@ function mapProfile(row: ProfileRow): Profile {
     consistency: s?.consistency ?? 0,
     streak: s?.win_streak ?? 0,
     avatar: [row.avatar_from ?? DEFAULT_AVATAR[0], row.avatar_to ?? DEFAULT_AVATAR[1]],
+    avatarUrl: row.avatar_url ?? undefined,
     bio: row.bio ?? "",
     followers: row.followers_count ?? 0,
     following: row.following_count ?? 0,
@@ -100,7 +102,7 @@ function mapProfile(row: ProfileRow): Profile {
 }
 
 const PROFILE_SELECT =
-  "id, handle, display_name, bio, country, flag, market, verified, avatar_from, avatar_to, rp, followers_count, following_count, trader_stats(win_rate, total_pnl_pct, trades_count, max_drawdown, consistency, win_streak)";
+  "id, handle, display_name, bio, country, flag, market, verified, avatar_from, avatar_to, avatar_url, rp, followers_count, following_count, trader_stats(win_rate, total_pnl_pct, trades_count, max_drawdown, consistency, win_streak)";
 
 export async function realGetMe(): Promise<Profile | null> {
   const supabase = await sb();

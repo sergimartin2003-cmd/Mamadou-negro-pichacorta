@@ -65,6 +65,8 @@ export interface Profile {
   consistency: number;
   streak: number;
   avatar: AvatarGradient;
+  /** Uploaded avatar image URL (Supabase Storage); falls back to the gradient. */
+  avatarUrl?: string;
   bio: string;
   followers: number;
   following: number;
