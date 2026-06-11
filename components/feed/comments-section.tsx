@@ -3,9 +3,12 @@
 import { useState, type ReactNode } from "react";
 import type { Comment, Profile } from "@/types/db";
 import { Avatar, Icon } from "@/components/ui";
-import { byId, me } from "@/lib/data/seed";
-import { getComments } from "@/lib/data/queries";
+import { byId } from "@/lib/data/seed";
+import { getComments, getProfilesByIds } from "@/lib/data/queries";
 import { addComment } from "@/lib/actions/social";
+import { useMe } from "@/components/shell/me-context";
+
+type Authors = Record<string, Profile>;
 
 interface CommentsSectionProps {
   postId: string;
@@ -17,17 +20,14 @@ interface CommentsSectionProps {
 interface CommentNodeProps {
   comment: Comment;
   replies: Comment[];
+  authors: Authors;
   onReply: (parentId: string, body: string) => void;
 }
 
-function authorOf(id: string): Profile | undefined {
-  return byId[id];
-}
-
-function CommentNode({ comment, replies, onReply }: CommentNodeProps) {
+function CommentNode({ comment, replies, authors, onReply }: CommentNodeProps) {
   const [replying, setReplying] = useState(false);
   const [draft, setDraft] = useState("");
-  const author = authorOf(comment.author);
+  const author = authors[comment.author] ?? byId[comment.author];
   if (!author) return null;
 
   function submitReply() {
@@ -83,7 +83,7 @@ function CommentNode({ comment, replies, onReply }: CommentNodeProps) {
         {replies.length > 0 && (
           <div style={{ marginTop: 10, paddingLeft: 12, borderLeft: "2px solid var(--line-1)", display: "flex", flexDirection: "column", gap: 12 }}>
             {replies.map((reply) => (
-              <CommentNode key={reply.id} comment={reply} replies={[]} onReply={onReply} />
+              <CommentNode key={reply.id} comment={reply} replies={[]} authors={authors} onReply={onReply} />
             ))}
           </div>
         )}
@@ -98,9 +98,11 @@ function CommentNode({ comment, replies, onReply }: CommentNodeProps) {
  * action (real with Supabase, optimistic-only in demo).
  */
 export function CommentsSection({ postId, count, children }: CommentsSectionProps) {
+  const me = useMe();
   const [open, setOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [authors, setAuthors] = useState<Authors>({ [me.id]: me });
   const [draft, setDraft] = useState("");
 
   function toggle() {
@@ -109,6 +111,10 @@ export function CommentsSection({ postId, count, children }: CommentsSectionProp
       getComments(postId).then((data) => {
         setComments(data);
         setLoaded(true);
+        const ids = [...new Set(data.map((c) => c.author))];
+        getProfilesByIds(ids).then((map) =>
+          setAuthors((prev) => ({ ...prev, ...map, [me.id]: me })),
+        );
       });
     }
   }
@@ -177,6 +183,7 @@ export function CommentsSection({ postId, count, children }: CommentsSectionProp
                 key={comment.id}
                 comment={comment}
                 replies={repliesFor(comment.id)}
+                authors={authors}
                 onReply={(parentId, body) => appendLocal(parentId, body)}
               />
             ))

@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { ChatMessage as ChatMessageType, Channel, Community } from "@/types/db";
-import { Avatar, Button, Icon, IconButton, RankBadge } from "@/components/ui";
+import type { ChatMessage as ChatMessageType, Channel, Community, Profile } from "@/types/db";
+import { Avatar, Button, Icon, IconButton } from "@/components/ui";
 import { ChatMessage } from "./chat-message";
-import { byId, me, traders } from "@/lib/data/seed";
+import { traders } from "@/lib/data/seed";
 import { tierFor } from "@/lib/domain/tiers";
 import { useRealtimeInserts } from "@/lib/supabase/use-realtime-inserts";
 import { sendChannelMessage } from "@/lib/actions/social";
+import { getProfilesByIds } from "@/lib/data/queries";
+import { useMe } from "@/components/shell/me-context";
 
 interface ChannelMessageRow {
   id: string;
@@ -32,17 +34,28 @@ interface CommunitiesViewProps {
 }
 
 export function CommunitiesView({ communities, channels, chatMessages }: CommunitiesViewProps) {
+  const me = useMe();
   const [activeCommunity, setActiveCommunity] = useState(communities[0]?.id ?? "");
   const [activeChannel, setActiveChannel] = useState(channels[0]?.id ?? "");
   const [mobilePane, setMobilePane] = useState<Pane>("rail");
   const [draft, setDraft] = useState("");
   const [localMessages, setLocalMessages] = useState<ChatMessageType[]>(chatMessages);
+  const [authors, setAuthors] = useState<Record<string, Profile>>({});
 
   // Switching channel or community must not carry over the prior view's messages or draft.
   useEffect(() => {
     setLocalMessages(chatMessages);
     setDraft("");
   }, [activeChannel, activeCommunity, chatMessages]);
+
+  // Resolve real author profiles for chat messages (Supabase → RPC, demo → seed).
+  useEffect(() => {
+    const ids = [...new Set(localMessages.map((m) => m.author))].filter(
+      (id) => !authors[id] && id !== me.id,
+    );
+    if (ids.length === 0) return;
+    void getProfilesByIds(ids).then((map) => setAuthors((prev) => ({ ...prev, ...map })));
+  }, [localMessages, authors, me.id]);
 
   const comm = communities.find((c) => c.id === activeCommunity);
 
@@ -381,7 +394,7 @@ export function CommunitiesView({ communities, channels, chatMessages }: Communi
           )}
           <div className="hr" style={{ margin: "0 22px 8px" }} />
           {localMessages.map((m) => (
-            <ChatMessage key={m.id} m={m} />
+            <ChatMessage key={m.id} m={m} author={authors[m.author] ?? (m.author === me.id ? me : undefined)} />
           ))}
         </div>
 

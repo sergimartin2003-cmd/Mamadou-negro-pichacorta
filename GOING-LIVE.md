@@ -38,7 +38,7 @@ solo: auth, base de datos, realtime, pagos y analytics.
    - `service_role` (pulsa *Reveal*) → `SUPABASE_SERVICE_ROLE_KEY`.
      ⚠️ La service_role **nunca** va en el cliente ni en un repo público.
 4. Aplica el schema: **SQL Editor → New query** y ejecuta EN ORDEN el contenido de
-   `supabase/migrations/0001…0005` (uno por uno). Después `supabase/seed.sql` si
+   `supabase/migrations/0001…0006` (uno por uno). Después `supabase/seed.sql` si
    quieres contenido inicial.
 5. Activa Realtime: **Database → Replication → supabase_realtime** y añade las
    tablas `channel_messages`, `dm_messages`, `notifications`.
@@ -88,7 +88,7 @@ solo: auth, base de datos, realtime, pagos y analytics.
 
 ## 3 · Checklist final antes de lanzar
 
-- [ ] Migraciones 0001–0005 aplicadas en Supabase sin errores.
+- [ ] Migraciones 0001–0006 aplicadas en Supabase sin errores.
 - [ ] Realtime activado en `channel_messages`, `dm_messages`, `notifications`.
 - [ ] Variables en Vercel (Production) y redeploy hecho.
 - [ ] Webhook de Stripe apuntando al dominio final y firma verificada

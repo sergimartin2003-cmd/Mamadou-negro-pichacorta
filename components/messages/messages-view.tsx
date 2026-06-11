@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Dm, DmMessage, Profile } from "@/types/db";
 import { Avatar, Button, Icon, IconButton, VerifiedTick } from "@/components/ui";
-import { getDmThread } from "@/lib/data/queries";
+import { getDmThread, getProfilesByIds } from "@/lib/data/queries";
 import { byId } from "@/lib/data/seed";
 import { sendDm } from "@/lib/actions/social";
 import { useRealtimeInserts } from "@/lib/supabase/use-realtime-inserts";
@@ -36,10 +36,19 @@ export function MessagesView({ dms, me }: MessagesViewProps) {
   const [draft, setDraft] = useState("");
   const [localThread, setLocalThread] = useState<DmMessage[]>([]);
   const [mobilePane, setMobilePane] = useState<MobilePane>("list");
+  const [partners, setPartners] = useState<Record<string, Profile>>({});
 
   const activeDm = dms.find((d) => d.id === activeId);
-  const activeWho = activeDm ? byId[activeDm.who] : null;
+  const whoOf = (id: string): Profile | undefined => partners[id] ?? byId[id];
+  const activeWho = activeDm ? whoOf(activeDm.who) : null;
   const messages = thread.length > 0 ? [...thread, ...localThread] : localThread;
+
+  // Resolve the real profiles of every conversation partner (demo → seed).
+  useEffect(() => {
+    const ids = [...new Set(dms.map((d) => d.who))].filter((id) => id && !partners[id]);
+    if (ids.length === 0) return;
+    void getProfilesByIds(ids).then((map) => setPartners((prev) => ({ ...prev, ...map })));
+  }, [dms, partners]);
 
   useEffect(() => {
     if (!activeId) return;
@@ -129,7 +138,7 @@ export function MessagesView({ dms, me }: MessagesViewProps) {
         </div>
         <div className="scroll" style={{ flex: 1, padding: "0 10px" }}>
           {dms.map((d) => {
-            const u = byId[d.who];
+            const u = whoOf(d.who);
             if (!u) return null;
             const on = d.id === activeId;
             return (

@@ -1,15 +1,17 @@
 "use client";
 
-import type { ChatMessage as ChatMessageType } from "@/types/db";
+import type { ChatMessage as ChatMessageType, Profile } from "@/types/db";
 import { Avatar, ChartFrame, RankBadge, VerifiedTick } from "@/components/ui";
 import { byId } from "@/lib/data/seed";
 
 export interface ChatMessageProps {
   m: ChatMessageType;
+  /** Resolved author (real with Supabase); falls back to the seed lookup. */
+  author?: Profile;
 }
 
-export function ChatMessage({ m }: ChatMessageProps) {
-  const author = byId[m.author];
+export function ChatMessage({ m, author: authorProp }: ChatMessageProps) {
+  const author = authorProp ?? byId[m.author];
   if (!author) return null;
 
   const chartSymbol = m.chart ? m.chart.split(" ")[0] : "";

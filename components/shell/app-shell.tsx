@@ -14,6 +14,7 @@ import { TopBar } from "./topbar";
 import { RightPanel } from "./right-panel";
 import { MobileNav } from "./mobile-nav";
 import { MobileDrawer } from "./mobile-drawer";
+import { MeProvider } from "./me-context";
 
 interface ShellData {
   me: Profile;
@@ -55,7 +56,9 @@ export function AppShell({ children }: AppShellProps) {
           onOpenMenu={() => setDrawerOpen(true)}
         />
         <div className="th-content">
-          <main className="th-page">{children}</main>
+          <main className="th-page">
+            <MeProvider value={data.me}>{children}</MeProvider>
+          </main>
           <RightPanel topTraders={data.topTraders} suggested={data.suggested} />
         </div>
       </div>
