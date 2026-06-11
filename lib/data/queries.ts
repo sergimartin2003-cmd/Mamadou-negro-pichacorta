@@ -171,14 +171,38 @@ export async function getProfile(idOrHandle: string): Promise<Profile | null> {
 }
 
 export async function getTopTraders(n: number): Promise<Profile[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetTopProfiles } = await import("./supabase-reads");
+      return await realGetTopProfiles(n);
+    } catch {
+      // fall through to seed
+    }
+  }
   return [...traders].sort((a, b) => b.rp - a.rp).slice(0, Math.max(0, n));
 }
 
 export async function getSuggestedTraders(n: number): Promise<Profile[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetTopProfiles } = await import("./supabase-reads");
+      return await realGetTopProfiles(n, 4);
+    } catch {
+      // fall through to seed
+    }
+  }
   return traders.slice(4, 4 + Math.max(0, n));
 }
 
 export async function getRankings(opts: RankingsOptions = {}): Promise<Profile[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetTopProfiles } = await import("./supabase-reads");
+      return await realGetTopProfiles(100);
+    } catch {
+      // fall through to seed
+    }
+  }
   const pool = opts.market
     ? traders.filter((trader) => trader.market === opts.market)
     : [...traders];
@@ -258,6 +282,14 @@ function nicheView(profile: Profile, row: NicheStatRow): Profile {
 
 /** Leaderboard for a niche (excludes the signed-in user), sorted by RP desc. */
 export async function getNicheLeaderboard(niche: NicheSlug): Promise<Profile[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetNicheLeaderboard } = await import("./supabase-reads");
+      return await realGetNicheLeaderboard(niche);
+    } catch {
+      // fall through to seed
+    }
+  }
   return userNicheStats
     .filter((row) => row.niche === niche && row.profileId !== seedMe.id)
     .map((row) => {
@@ -280,12 +312,29 @@ export async function getNicheProfile(
 
 /** RP for a profile in a niche (used for the feed's contextual rank badge). */
 export async function getNicheRp(profileId: string, niche: NicheSlug): Promise<number | null> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetNicheRp } = await import("./supabase-reads");
+      return await realGetNicheRp(profileId, niche);
+    } catch {
+      // fall through to seed
+    }
+  }
   const row = userNicheStats.find((r) => r.profileId === profileId && r.niche === niche);
   return row ? row.rp : null;
 }
 
 /** Every niche a profile competes in, in display order — its profile cards. */
 export async function getNicheStatsForProfile(profileId: string): Promise<NicheStatRow[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetNicheStatsForProfile } = await import("./supabase-reads");
+      const rows = await realGetNicheStatsForProfile(profileId);
+      return rows.sort((a, b) => NICHE_SLUGS.indexOf(a.niche) - NICHE_SLUGS.indexOf(b.niche));
+    } catch {
+      // fall through to seed
+    }
+  }
   return userNicheStats
     .filter((row) => row.profileId === profileId)
     .sort((a, b) => NICHE_SLUGS.indexOf(a.niche) - NICHE_SLUGS.indexOf(b.niche));
@@ -364,6 +413,14 @@ export async function getCoursesByInstructor(instructorId: string): Promise<Cour
 }
 
 export async function getComments(postId: string): Promise<Comment[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetComments } = await import("./supabase-reads");
+      return await realGetComments(postId);
+    } catch {
+      // fall through to seed
+    }
+  }
   return commentsForPost(postId);
 }
 
@@ -431,11 +488,26 @@ export async function getNotifications(): Promise<Notification[]> {
 }
 
 export async function getDms(): Promise<Dm[]> {
+  if (supabaseConfigured()) {
+    try {
+      const { realGetDms } = await import("./supabase-reads");
+      return await realGetDms();
+    } catch {
+      // fall through to seed
+    }
+  }
   return [...dms];
 }
 
 export async function getDmThread(id: string): Promise<DmMessage[]> {
-  void id;
+  if (supabaseConfigured()) {
+    try {
+      const { realGetDmThread } = await import("./supabase-reads");
+      return await realGetDmThread(id);
+    } catch {
+      // fall through to seed
+    }
+  }
   return [...dmThread];
 }
 

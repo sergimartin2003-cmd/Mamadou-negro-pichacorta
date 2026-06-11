@@ -14,7 +14,10 @@
 import type {
   ChatMessage,
   Channel,
+  Comment,
   Community,
+  Dm,
+  DmMessage,
   Market,
   MarketScope,
   Notification,
@@ -22,6 +25,7 @@ import type {
   Post,
   Profile,
 } from "@/types/db";
+import type { NicheStatRow } from "./niche-seed";
 
 /**
  * Defer the cookie-bound server client behind a runtime import so `next/headers`
@@ -261,4 +265,176 @@ export async function realGetNotifications(): Promise<Notification[]> {
       text: r.body ?? "",
       who: r.actor_id,
     }));
+}
+
+// --- comments ----------------------------------------------------------------
+
+export async function realGetComments(postId: string): Promise<Comment[]> {
+  const supabase = await sb();
+  const { data } = await supabase
+    .from("comments")
+    .select("id, post_id, author_id, parent_id, body, created_at")
+    .eq("post_id", postId)
+    .order("created_at", { ascending: true })
+    .limit(200);
+  return (
+    (data ?? []) as { id: string; post_id: string; author_id: string; parent_id: string | null; body: string | null; created_at: string }[]
+  ).map((r) => ({
+    id: r.id,
+    postId: r.post_id,
+    author: r.author_id,
+    parentId: r.parent_id,
+    body: r.body ?? "",
+    time: rel(r.created_at),
+    up: 0,
+  }));
+}
+
+// --- direct messages ---------------------------------------------------------
+
+export async function realGetDms(): Promise<Dm[]> {
+  const supabase = await sb();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data: parts } = await supabase
+    .from("dm_participants")
+    .select("thread_id")
+    .eq("profile_id", user.id);
+  const threadIds = ((parts ?? []) as { thread_id: string }[]).map((p) => p.thread_id);
+  if (threadIds.length === 0) return [];
+
+  const { data: others } = await supabase
+    .from("dm_participants")
+    .select("thread_id, profile_id")
+    .in("thread_id", threadIds)
+    .neq("profile_id", user.id);
+  const otherByThread: Record<string, string> = {};
+  for (const o of (others ?? []) as { thread_id: string; profile_id: string }[]) {
+    otherByThread[o.thread_id] = o.profile_id;
+  }
+
+  const { data: msgs } = await supabase
+    .from("dm_messages")
+    .select("thread_id, body, created_at")
+    .in("thread_id", threadIds)
+    .order("created_at", { ascending: false });
+  const lastByThread: Record<string, { body: string | null; created_at: string }> = {};
+  for (const m of (msgs ?? []) as { thread_id: string; body: string | null; created_at: string }[]) {
+    if (!lastByThread[m.thread_id]) lastByThread[m.thread_id] = m;
+  }
+
+  return threadIds
+    .map((tid) => ({
+      id: tid,
+      who: otherByThread[tid] ?? "",
+      last: lastByThread[tid]?.body ?? "",
+      time: lastByThread[tid] ? rel(lastByThread[tid].created_at) : "",
+      unread: 0,
+      online: false,
+    }))
+    .filter((d) => d.who);
+}
+
+export async function realGetDmThread(threadId: string): Promise<DmMessage[]> {
+  if (!threadId) return [];
+  const supabase = await sb();
+  const { data } = await supabase
+    .from("dm_messages")
+    .select("author_id, body, file_name, created_at")
+    .eq("thread_id", threadId)
+    .order("created_at", { ascending: true })
+    .limit(200);
+  return (
+    (data ?? []) as { author_id: string; body: string | null; file_name: string | null; created_at: string }[]
+  ).map((r) => ({
+    from: r.author_id,
+    time: new Date(r.created_at).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" }),
+    text: r.body ?? "",
+    file: r.file_name ?? undefined,
+  }));
+}
+
+// --- competitive layer: per-niche stats & leaderboards -----------------------
+
+interface UnsRow {
+  profile_id: string;
+  niche: string;
+  rp: number;
+  verified: boolean;
+  win: number | null;
+  season_delta: number | null;
+  metrics: Record<string, string> | null;
+}
+
+function mapNicheRow(r: UnsRow): NicheStatRow {
+  return {
+    profileId: r.profile_id,
+    niche: r.niche as NicheStatRow["niche"],
+    rp: r.rp ?? 1000,
+    verified: r.verified ?? false,
+    win: r.win ?? 0,
+    delta: r.season_delta ?? 0,
+    metrics: r.metrics ?? {},
+  };
+}
+
+export async function realGetNicheStatsForProfile(profileId: string): Promise<NicheStatRow[]> {
+  const supabase = await sb();
+  const { data } = await supabase
+    .from("user_niche_stats")
+    .select("profile_id, niche, rp, verified, win, season_delta, metrics")
+    .eq("profile_id", profileId);
+  return ((data ?? []) as UnsRow[]).map(mapNicheRow);
+}
+
+export async function realGetNicheRp(profileId: string, niche: string): Promise<number | null> {
+  const supabase = await sb();
+  const { data } = await supabase
+    .from("user_niche_stats")
+    .select("rp")
+    .eq("profile_id", profileId)
+    .eq("niche", niche)
+    .maybeSingle();
+  return data ? ((data as { rp: number }).rp ?? null) : null;
+}
+
+export async function realGetNicheLeaderboard(niche: string): Promise<Profile[]> {
+  const supabase = await sb();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data } = await supabase
+    .from("user_niche_stats")
+    .select(`rp, verified, win, season_delta, profile_id, profiles!inner(${PROFILE_SELECT})`)
+    .eq("niche", niche)
+    .order("rp", { ascending: false })
+    .limit(100);
+  const rows = (data ?? []) as Array<{
+    rp: number;
+    verified: boolean;
+    win: number | null;
+    season_delta: number | null;
+    profile_id: string;
+    profiles: ProfileRow | ProfileRow[];
+  }>;
+  return rows
+    .filter((r) => !user || r.profile_id !== user.id)
+    .map((r) => {
+      const p = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
+      return { ...mapProfile(p), rp: r.rp, verified: r.verified, win: r.win ?? 0, pnl: r.season_delta ?? 0 };
+    });
+}
+
+/** Top profiles by RP (rankings, right-panel, suggestions). */
+export async function realGetTopProfiles(n: number, offset = 0): Promise<Profile[]> {
+  const supabase = await sb();
+  const { data } = await supabase
+    .from("profiles")
+    .select(PROFILE_SELECT)
+    .order("rp", { ascending: false })
+    .range(offset, offset + Math.max(0, n) - 1);
+  return ((data ?? []) as ProfileRow[]).map(mapProfile);
 }
