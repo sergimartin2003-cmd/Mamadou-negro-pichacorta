@@ -51,6 +51,33 @@ import {
 import { courses, buildModulesForCourse, buildReviewsForCourse } from "./courses-seed";
 import { commentsForPost } from "./comments-seed";
 
+// --- Unified feature modules (gamification + multi-niche tools) -------------
+import { rankScores, type PredictScore } from "@/lib/domain/predict";
+import { rankSpeedScores, type SpeedScore } from "@/lib/domain/speed";
+import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
+import type { Season } from "@/lib/domain/season";
+import type { StartupSnapshot } from "@/lib/domain/startup";
+import type { StoreSnapshot } from "@/lib/domain/store";
+import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
+import type { DropshipSnapshot } from "@/lib/domain/dropship";
+import type { Task } from "@/lib/domain/tasks";
+import type { Security } from "@/lib/domain/screener";
+import type { TiltTrade } from "@/lib/domain/tilt";
+import {
+  predictLeaderboard,
+  speedLeaderboard,
+  challenges as challengeSeed,
+  challengeProgress,
+  currentSeason,
+  startupSnapshot,
+  storeSnapshot,
+  portfolioSnapshot,
+  dropshipSnapshot,
+  tasks as taskSeed,
+  securities as securitiesSeed,
+  tiltTrades as tiltTradesSeed,
+} from "./modules-seed";
+
 export type { NicheStatRow } from "./niche-seed";
 
 export type FeedScope = "following" | "global" | "verified";
@@ -522,4 +549,53 @@ export async function getDmThread(id: string): Promise<DmMessage[]> {
 
 function engagement(post: Post): number {
   return post.up - post.down + post.comments;
+}
+
+// --- Unified feature module queries -----------------------------------------
+
+export async function getPredictLeaderboard(): Promise<PredictScore[]> {
+  return rankScores(predictLeaderboard);
+}
+
+export async function getSpeedLeaderboard(): Promise<SpeedScore[]> {
+  return rankSpeedScores(speedLeaderboard);
+}
+
+export async function getChallenges(): Promise<{
+  challenges: Challenge[];
+  progress: Record<string, ChallengeProgress>;
+}> {
+  return { challenges: [...challengeSeed], progress: { ...challengeProgress } };
+}
+
+export async function getCurrentSeason(): Promise<Season> {
+  return { ...currentSeason };
+}
+
+export async function getStartupSnapshot(): Promise<StartupSnapshot> {
+  return startupSnapshot;
+}
+
+export async function getStoreSnapshot(): Promise<StoreSnapshot> {
+  return storeSnapshot;
+}
+
+export async function getPortfolioSnapshot(): Promise<PortfolioSnapshot> {
+  return portfolioSnapshot;
+}
+
+export async function getDropshipSnapshot(): Promise<DropshipSnapshot> {
+  return dropshipSnapshot;
+}
+
+export async function getTasks(): Promise<Task[]> {
+  return [...taskSeed];
+}
+
+export async function getSecurities(): Promise<Security[]> {
+  return [...securitiesSeed];
+}
+
+export async function getTiltTrades(): Promise<TiltTrade[]> {
+  return [...tiltTradesSeed];
 }

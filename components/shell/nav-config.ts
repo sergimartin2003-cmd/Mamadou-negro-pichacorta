@@ -15,6 +15,16 @@ export const NAV: readonly NavItem[] = [
   { href: "/retos", label: "Retos", icon: "swords" },
   { href: "/academy", label: "Academia", icon: "book" },
   { href: "/marketplace", label: "Cursos", icon: "play" },
+  { href: "/startup", label: "Startup", icon: "briefcase" },
+  { href: "/store", label: "Tienda", icon: "bag" },
+  { href: "/portfolio", label: "Cartera", icon: "pie" },
+  { href: "/research", label: "Análisis", icon: "search" },
+  { href: "/dropshipping", label: "Dropshipping", icon: "box" },
+  { href: "/tasks", label: "Tareas", icon: "board" },
+  { href: "/games", label: "Arcade", icon: "bolt" },
+  { href: "/challenges", label: "Desafíos", icon: "target" },
+  { href: "/leagues", label: "Ligas", icon: "shield" },
+  { href: "/tilt", label: "Tilt-Meter", icon: "flame" },
   { href: "/messages", label: "Mensajes", icon: "chat", badge: 2 },
   { href: "/profile", label: "Perfil", icon: "user" },
 ] as const;
@@ -43,6 +53,16 @@ export const ROUTE_TITLES: Readonly<Record<string, string>> = {
   "/premium": "EmprendeHub Pro",
   "/create": "Nuevo Post",
   "/teach": "Panel de instructor",
+  "/startup": "Startup Dashboard",
+  "/store": "Store Builder",
+  "/portfolio": "Portfolio Tracker",
+  "/research": "Investment Research Hub",
+  "/dropshipping": "Dropshipping Dashboard",
+  "/tasks": "Tareas & Proyectos",
+  "/games": "Arcade",
+  "/challenges": "Desafíos",
+  "/leagues": "Ligas",
+  "/tilt": "Tilt-Meter",
 };
 
 /** True when `pathname` is within the section rooted at `href`. */
