@@ -23,6 +23,7 @@ import type { PredictScore } from "@/lib/domain/predict";
 import type { SpeedScore } from "@/lib/domain/speed";
 import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
 import type { Season } from "@/lib/domain/season";
+import type { StartupSnapshot } from "@/lib/domain/startup";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -767,6 +768,44 @@ export const predictLeaderboard: readonly PredictScore[] = [
   { handle: "owenp", name: "Owen Pierce", mode: "classic", score: 10, streak: 3 },
   { handle: "camir", name: "Camila Rocha", mode: "classic", score: 10, streak: 2 },
 ] as const;
+
+/** Demo SaaS snapshot powering the Startup Dashboard module. */
+export const startupSnapshot: StartupSnapshot = {
+  company: "Nimbus Analytics",
+  currency: "€",
+  mrrSeries: [
+    { month: "Jul", mrr: 6200 },
+    { month: "Ago", mrr: 7100 },
+    { month: "Sep", mrr: 8300 },
+    { month: "Oct", mrr: 9600 },
+    { month: "Nov", mrr: 10800 },
+    { month: "Dic", mrr: 12100 },
+    { month: "Ene", mrr: 13200 },
+    { month: "Feb", mrr: 14500 },
+    { month: "Mar", mrr: 15600 },
+    { month: "Abr", mrr: 16700 },
+    { month: "May", mrr: 17600 },
+    { month: "Jun", mrr: 18400 },
+  ],
+  expenses: [
+    { label: "Salarios", amount: 22000 },
+    { label: "Marketing", amount: 8000 },
+    { label: "Infra / Hosting", amount: 3200 },
+    { label: "Oficina", amount: 1800 },
+    { label: "Herramientas", amount: 1400 },
+    { label: "Otros", amount: 1600 },
+  ],
+  cash: 110000,
+  customersAtStart: 220,
+  churnedCustomers: 9,
+  newCustomers: 28,
+  salesMarketingSpend: 8000,
+  arpa: 84,
+  grossMargin: 0.82,
+  churnDeltaPct: 2,
+  goalMrr: 30000,
+  goalMonths: 6,
+};
 
 /** The active competitive season (3-month window). */
 export const currentSeason: Season = {

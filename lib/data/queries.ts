@@ -21,6 +21,7 @@ import { rankScores, type PredictScore } from "@/lib/domain/predict";
 import { rankSpeedScores, type SpeedScore } from "@/lib/domain/speed";
 import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
 import type { Season } from "@/lib/domain/season";
+import type { StartupSnapshot } from "@/lib/domain/startup";
 import {
   achievements,
   byId,
@@ -36,6 +37,7 @@ import {
   challenges as challengeSeed,
   challengeProgress,
   currentSeason,
+  startupSnapshot,
   notifications,
   posts,
   predictLeaderboard,
@@ -180,6 +182,10 @@ export async function getChallenges(): Promise<{
 
 export async function getCurrentSeason(): Promise<Season> {
   return { ...currentSeason };
+}
+
+export async function getStartupSnapshot(): Promise<StartupSnapshot> {
+  return startupSnapshot;
 }
 
 function engagement(post: Post): number {

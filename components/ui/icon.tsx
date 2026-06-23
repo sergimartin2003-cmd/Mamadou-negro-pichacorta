@@ -44,6 +44,7 @@ export const ICONS = {
   ellipsis: "M5 12h.01M12 12h.01M19 12h.01",
   logout: "M15 4h4v16h-4M11 8l-4 4 4 4M7 12h9",
   menu: "M4 7h16M4 12h16M4 17h16",
+  briefcase: "M3 8h18v11H3V8ZM8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18",
 } as const;
 
 export type IconName = keyof typeof ICONS;

@@ -6,6 +6,23 @@ commit pushed to `claude/elegant-brown-38fb2l`.
 
 **How to resume:** read this file, find the first ⬜ item, build it next.
 
+## Tracks
+This repo now grows TWO specs as new TradeHub modules (branding stays
+**TradeHub** — no EmprendeHub/rebrand; trading + games stay):
+- **Track A** — 70 extreme gamification features (below).
+- **Track B** — Multi-niche expansion (Emprendimiento / Inversiones / Ecom /
+  Dropshipping / Marketing / Productividad), 44 modules, added as new sections.
+
+### 💼 Track B — Multi-niche modules
+- ✅ B1. Startup Dashboard — MRR/ARR, churn, CAC, LTV, LTV:CAC, burn, runway, growth, goal, alerts
+- ⬜ B2. Business Model Canvas · ⬜ B3. Idea Validation · ⬜ B4. Pitch Deck Builder
+- ⬜ B5. Entrepreneur Mentoring · ⬜ B6. Tasks/Projects · ⬜ B7. Legal Tech · ⬜ B8. Financial Modeling
+- ⬜ B9. Portfolio Tracker · ⬜ B10. Robo-Advisor · ⬜ B11. Real Estate · ⬜ B12. Crypto Portfolio
+- ⬜ B13. Dividend Tracker · ⬜ B14. Alt Investments · ⬜ B15. Retirement Planner · ⬜ B16. Research Hub
+- ⬜ B17. Store Builder · ⬜ B18. Product Research · ⬜ B19. Supplier Directory · ⬜ B20. Inventory
+- ⬜ B21. CRM · ⬜ B22. Marketing Automation · ⬜ B23. Shipping · ⬜ B24. Multi-channel
+- ⬜ B25–B32. Dropshipping suite · ⬜ B33–B38. Marketing digital · ⬜ B39–B44. Productividad/Mindset
+
 ## Conventions / compliance notes
 - The seed-backed data layer (`lib/data`) is the source of truth until Supabase
   is wired; new domain logic lives in `lib/domain/*` (pure + tested).
@@ -127,3 +144,7 @@ commit pushed to `claude/elegant-brown-38fb2l`.
   progress, tier rewards) built on existing `tiers.ts`/`elo.ts`,
   `components/leagues/**`, route `/leagues`, Leagues nav, seed season +
   `getCurrentSeason()`. 181 green, build green.
+- Feature B1 (Startup Dashboard): `lib/domain/startup.ts` + 26 tests (ARR,
+  churn, CAC, LTV, LTV:CAC, burn, runway, growth, required growth, alerts),
+  `components/startup/**`, route `/startup`, Startup nav, briefcase icon,
+  seed snapshot + `getStartupSnapshot()`. 207 green, build green.
