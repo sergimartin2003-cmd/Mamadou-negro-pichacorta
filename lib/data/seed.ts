@@ -28,6 +28,7 @@ import type { StoreSnapshot } from "@/lib/domain/store";
 import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
 import type { DropshipSnapshot } from "@/lib/domain/dropship";
 import type { Task } from "@/lib/domain/tasks";
+import type { Security } from "@/lib/domain/screener";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -878,6 +879,20 @@ export const tasks: readonly Task[] = [
   { id: "t8", title: "Negociar MOQ con proveedor", status: "doing", priority: "med", project: "Operaciones" },
   { id: "t9", title: "Pedir muestras de producto", status: "done", priority: "low", project: "Operaciones" },
   { id: "t10", title: "Automatizar fulfillment", status: "todo", priority: "high", project: "Operaciones" },
+];
+
+/** Demo universe powering the Investment Research Hub screener. */
+export const securities: readonly Security[] = [
+  { id: "se1", name: "Apple", symbol: "AAPL", sector: "Tech", price: 212, per: 29, pb: 46, roe: 0.45, dividendYield: 0.005, growth: 0.08, debtToEquity: 1.5, marketCap: 3.2e12 },
+  { id: "se2", name: "Microsoft", symbol: "MSFT", sector: "Tech", price: 430, per: 35, pb: 12, roe: 0.39, dividendYield: 0.007, growth: 0.15, debtToEquity: 0.4, marketCap: 3.1e12 },
+  { id: "se3", name: "Coca-Cola", symbol: "KO", sector: "Consumo", price: 62, per: 24, pb: 10, roe: 0.4, dividendYield: 0.031, growth: 0.04, debtToEquity: 1.6, marketCap: 2.7e11 },
+  { id: "se4", name: "JPMorgan", symbol: "JPM", sector: "Finanzas", price: 198, per: 12, pb: 1.8, roe: 0.17, dividendYield: 0.024, growth: 0.06, debtToEquity: 1.3, marketCap: 5.7e11 },
+  { id: "se5", name: "Pfizer", symbol: "PFE", sector: "Salud", price: 28, per: 13, pb: 1.6, roe: 0.12, dividendYield: 0.058, growth: -0.02, debtToEquity: 0.7, marketCap: 1.6e11 },
+  { id: "se6", name: "ExxonMobil", symbol: "XOM", sector: "Energía", price: 116, per: 14, pb: 2.1, roe: 0.18, dividendYield: 0.033, growth: 0.03, debtToEquity: 0.2, marketCap: 4.6e11 },
+  { id: "se7", name: "Nvidia", symbol: "NVDA", sector: "Tech", price: 124, per: 55, pb: 50, roe: 0.69, dividendYield: 0.0003, growth: 0.6, debtToEquity: 0.4, marketCap: 3.0e12 },
+  { id: "se8", name: "Realty Income", symbol: "O", sector: "Inmobiliario", price: 58, per: 50, pb: 1.3, roe: 0.03, dividendYield: 0.054, growth: 0.05, debtToEquity: 0.7, marketCap: 5.0e10 },
+  { id: "se9", name: "Banco Santander", symbol: "SAN", sector: "Finanzas", price: 4.6, per: 6, pb: 0.7, roe: 0.13, dividendYield: 0.045, growth: 0.07, debtToEquity: 2.4, marketCap: 7.0e10 },
+  { id: "se10", name: "Inditex", symbol: "ITX", sector: "Consumo", price: 47, per: 26, pb: 6.5, roe: 0.31, dividendYield: 0.029, growth: 0.11, debtToEquity: 0.1, marketCap: 1.5e11 },
 ];
 
 /** The active competitive season (3-month window). */

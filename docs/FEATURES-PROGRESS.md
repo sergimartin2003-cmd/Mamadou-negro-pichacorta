@@ -19,7 +19,7 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
 - ⬜ B5. Entrepreneur Mentoring · ✅ B6. Tasks/Projects (Kanban — move/advance, progress, project filter) · ⬜ B7. Legal Tech · ⬜ B8. Financial Modeling
 - ✅ B9. Portfolio Tracker — multi-asset value/P&L, allocation by type+region, concentration & diversification, holdings table
 - ⬜ B10. Robo-Advisor · ⬜ B11. Real Estate · ⬜ B12. Crypto Portfolio
-- ⬜ B13. Dividend Tracker · ⬜ B14. Alt Investments · ⬜ B15. Retirement Planner · ⬜ B16. Research Hub
+- ⬜ B13. Dividend Tracker · ⬜ B14. Alt Investments · ⬜ B15. Retirement Planner · ✅ B16. Research Hub (screener: filters, valuation score, sortable table)
 - ✅ B17. Store Builder — KPIs (conv, AOV, refunds, growth), catalog w/ margins+stock, top products, low-stock alerts
 - ⬜ B18. Product Research · ⬜ B19. Supplier Directory · ⬜ B20. Inventory
 - ⬜ B21. CRM · ⬜ B22. Marketing Automation · ⬜ B23. Shipping · ⬜ B24. Multi-channel
@@ -168,3 +168,7 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
   project filter), `components/tasks/**` (animated board, move buttons,
   project segmented), route `/tasks`, Tasks nav, board icon, seed + `getTasks()`.
   280 green.
+- Feature B16 (Investment Research Hub): `lib/domain/screener.ts` + 15 tests
+  (matchesFilter, screen, valuationScore, sortSecurities, sectors),
+  `components/research/**` (range-slider filters, sortable table, score),
+  route `/research`, Research nav, seed universe + `getSecurities()`. 295 green.
