@@ -17,6 +17,7 @@ import type {
   Post,
   Profile,
 } from "@/types/db";
+import { rankScores, type PredictScore } from "@/lib/domain/predict";
 import {
   achievements,
   byId,
@@ -31,6 +32,7 @@ import {
   me as seedMe,
   notifications,
   posts,
+  predictLeaderboard,
   traders,
 } from "./seed";
 
@@ -152,6 +154,10 @@ export async function getDms(): Promise<Dm[]> {
 export async function getDmThread(id: string): Promise<DmMessage[]> {
   void id;
   return [...dmThread];
+}
+
+export async function getPredictLeaderboard(): Promise<PredictScore[]> {
+  return rankScores(predictLeaderboard);
 }
 
 function engagement(post: Post): number {

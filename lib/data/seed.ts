@@ -19,6 +19,7 @@ import type {
   Post,
   Profile,
 } from "@/types/db";
+import type { PredictScore } from "@/lib/domain/predict";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -750,6 +751,18 @@ export const dmThread: readonly DmMessage[] = [
     file: "ES-journal-template.csv",
   },
   { from: "me", time: "09:34", text: "Legend, thank you 🙏" },
+] as const;
+
+/** Seed leaderboard for the "Predict the Next Candle" minigame. */
+export const predictLeaderboard: readonly PredictScore[] = [
+  { handle: "lenatrades", name: "Lena Volkov", mode: "extreme", score: 1000, streak: 14 },
+  { handle: "kaito_fx", name: "Kaito Mercer", mode: "turbo", score: 150, streak: 11 },
+  { handle: "theonk", name: "Theo Nakamura", mode: "turbo", score: 150, streak: 9 },
+  { handle: "sofiacharts", name: "Sofia Marín", mode: "turbo", score: 120, streak: 6 },
+  { handle: "dcole", name: "Dmitri Cole", mode: "turbo", score: 90, streak: 5 },
+  { handle: "priya_a", name: "Priya Anand", mode: "classic", score: 10, streak: 4 },
+  { handle: "owenp", name: "Owen Pierce", mode: "classic", score: 10, streak: 3 },
+  { handle: "camir", name: "Camila Rocha", mode: "classic", score: 10, streak: 2 },
 ] as const;
 
 /**
