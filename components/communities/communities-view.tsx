@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import type { ChatMessage as ChatMessageType, Channel, Community } from "@/types/db";
-import { Avatar, Button, Icon, IconButton, RankBadge } from "@/components/ui";
+import { Avatar, Button, Icon, IconButton } from "@/components/ui";
 import { ChatMessage } from "./chat-message";
-import { byId, me, traders } from "@/lib/data/seed";
+import { me, traders } from "@/lib/data/seed";
 import { tierFor } from "@/lib/domain/tiers";
 
 type Pane = "rail" | "channels" | "chat" | "members";

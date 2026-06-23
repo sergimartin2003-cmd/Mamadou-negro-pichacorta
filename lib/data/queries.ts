@@ -1,7 +1,13 @@
 // Supabase-backed implementations swap in here when supabaseConfigured() is true.
 // Every function is async and returns a Promise so the data source can change
 // (seed → Supabase) without touching call sites.
+//
+// When credentials are present we read from Supabase (lib/data/supabase-queries),
+// falling back to seed content on any error so the app never hard-fails. Reads
+// that legitimately return null/empty (e.g. an unknown profile) are passed through.
 
+import { supabaseConfigured } from "@/lib/env";
+import * as sb from "./supabase-queries";
 import type {
   Achievement,
   ChatMessage,
@@ -52,11 +58,27 @@ export interface CompetitionFilter {
   joined?: boolean;
 }
 
+/**
+ * Run the Supabase-backed fetcher when credentials are configured, falling back
+ * to seed content on any error so the app degrades gracefully in demo mode.
+ */
+async function live<T>(fetch: () => Promise<T>, fallback: () => T | Promise<T>): Promise<T> {
+  if (!supabaseConfigured()) return fallback();
+  try {
+    return await fetch();
+  } catch {
+    return fallback();
+  }
+}
+
+// Seed-backed: getMe/getNotifications are user-scoped and need a session-aware
+// client (server cookies vs browser). Wiring those live is a follow-up; the
+// anon read layer only serves public data.
 export async function getMe(): Promise<Profile> {
   return seedMe;
 }
 
-export async function getFeed(opts: FeedOptions = {}): Promise<Post[]> {
+function seedFeed(opts: FeedOptions): Post[] {
   let result = [...posts];
 
   if (opts.market) {
@@ -74,7 +96,11 @@ export async function getFeed(opts: FeedOptions = {}): Promise<Post[]> {
   return result;
 }
 
-export async function getProfile(idOrHandle: string): Promise<Profile | null> {
+export async function getFeed(opts: FeedOptions = {}): Promise<Post[]> {
+  return live(() => sb.getFeed(opts), () => seedFeed(opts));
+}
+
+function seedProfile(idOrHandle: string): Profile | null {
   const byKey = byId[idOrHandle];
   if (byKey) return byKey;
 
@@ -85,23 +111,38 @@ export async function getProfile(idOrHandle: string): Promise<Profile | null> {
   return byHandle ?? null;
 }
 
+export async function getProfile(idOrHandle: string): Promise<Profile | null> {
+  return live(() => sb.getProfile(idOrHandle), () => seedProfile(idOrHandle));
+}
+
 export async function getTopTraders(n: number): Promise<Profile[]> {
-  return [...traders].sort((a, b) => b.rp - a.rp).slice(0, Math.max(0, n));
+  return live(
+    () => sb.getTopTraders(n),
+    () => [...traders].sort((a, b) => b.rp - a.rp).slice(0, Math.max(0, n)),
+  );
 }
 
 export async function getSuggestedTraders(n: number): Promise<Profile[]> {
-  return traders.slice(4, 4 + Math.max(0, n));
+  return live(
+    () => sb.getSuggestedTraders(n),
+    () => traders.slice(4, 4 + Math.max(0, n)),
+  );
 }
 
 export async function getRankings(opts: RankingsOptions = {}): Promise<Profile[]> {
-  const pool = opts.market
-    ? traders.filter((trader) => trader.market === opts.market)
-    : [...traders];
-  return pool.sort((a, b) => b.rp - a.rp);
+  return live(
+    () => sb.getRankings(opts),
+    () => {
+      const pool = opts.market
+        ? traders.filter((trader) => trader.market === opts.market)
+        : [...traders];
+      return pool.sort((a, b) => b.rp - a.rp);
+    },
+  );
 }
 
 export async function getCommunities(): Promise<Community[]> {
-  return [...communities];
+  return live(() => sb.getCommunities(), () => [...communities]);
 }
 
 export async function getChannels(communityId: string): Promise<Channel[]> {
@@ -114,7 +155,7 @@ export async function getChatMessages(channelId: string): Promise<ChatMessage[]>
   return [...chatMsgs];
 }
 
-export async function getCompetitions(filter: CompetitionFilter = {}): Promise<Competition[]> {
+function seedCompetitions(filter: CompetitionFilter): Competition[] {
   let result = [...competitions];
 
   if (filter.market) {
@@ -126,6 +167,10 @@ export async function getCompetitions(filter: CompetitionFilter = {}): Promise<C
   }
 
   return result;
+}
+
+export async function getCompetitions(filter: CompetitionFilter = {}): Promise<Competition[]> {
+  return live(() => sb.getCompetitions(filter), () => seedCompetitions(filter));
 }
 
 export async function getLearningPaths(): Promise<LearningPath[]> {

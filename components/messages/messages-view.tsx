@@ -13,7 +13,7 @@ interface MessagesViewProps {
 
 type MobilePane = "list" | "thread";
 
-export function MessagesView({ dms, me }: MessagesViewProps) {
+export function MessagesView({ dms }: MessagesViewProps) {
   const [activeId, setActiveId] = useState<string>(dms[0]?.id ?? "");
   const [thread, setThread] = useState<DmMessage[]>([]);
   const [loadingThread, setLoadingThread] = useState(false);
