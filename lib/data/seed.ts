@@ -29,6 +29,7 @@ import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
 import type { DropshipSnapshot } from "@/lib/domain/dropship";
 import type { Task } from "@/lib/domain/tasks";
 import type { Security } from "@/lib/domain/screener";
+import type { TiltTrade } from "@/lib/domain/tilt";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -893,6 +894,15 @@ export const securities: readonly Security[] = [
   { id: "se8", name: "Realty Income", symbol: "O", sector: "Inmobiliario", price: 58, per: 50, pb: 1.3, roe: 0.03, dividendYield: 0.054, growth: 0.05, debtToEquity: 0.7, marketCap: 5.0e10 },
   { id: "se9", name: "Banco Santander", symbol: "SAN", sector: "Finanzas", price: 4.6, per: 6, pb: 0.7, roe: 0.13, dividendYield: 0.045, growth: 0.07, debtToEquity: 2.4, marketCap: 7.0e10 },
   { id: "se10", name: "Inditex", symbol: "ITX", sector: "Consumo", price: 47, per: 26, pb: 6.5, roe: 0.31, dividendYield: 0.029, growth: 0.11, debtToEquity: 0.1, marketCap: 1.5e11 },
+];
+
+/** Recent trades for the signed-in user, powering the Tilt-Meter. */
+export const tiltTrades: readonly TiltTrade[] = [
+  { id: "tt1", minutesAgo: 1, result: "loss", size: 200 },
+  { id: "tt2", minutesAgo: 2, result: "loss", size: 100 },
+  { id: "tt3", minutesAgo: 4, result: "loss", size: 100 },
+  { id: "tt4", minutesAgo: 30, result: "win", size: 100 },
+  { id: "tt5", minutesAgo: 55, result: "win", size: 90 },
 ];
 
 /** The active competitive season (3-month window). */

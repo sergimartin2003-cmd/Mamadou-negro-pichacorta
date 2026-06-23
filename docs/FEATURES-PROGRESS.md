@@ -13,6 +13,11 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
 - **Track B** — Multi-niche expansion (Emprendimiento / Inversiones / Ecom /
   Dropshipping / Marketing / Productividad), 44 modules, added as new sections.
 
+### 🦅 Track C — Differentiation / moat features
+- ⬜ C1. Trade Court (jury verdicts on trades) · ⬜ C2. Museo del Rekt (account autopsies)
+- ✅ C3. Tilt-Meter — behavioral monitor: rapid-fire + loss-streak + revenge-sizing → 0–100 score, lockout at 100
+- ⬜ C4. Mercado Negro (ladder-gated content) · ⬜ C5. Oráculo (retail vs elite sentiment) · ⬜ C6. Shadow Mode (spectator + bets)
+
 ### 💼 Track B — Multi-niche modules
 - ✅ B1. Startup Dashboard — MRR/ARR, churn, CAC, LTV, LTV:CAC, burn, runway, growth, goal, alerts
 - ⬜ B2. Business Model Canvas · ⬜ B3. Idea Validation · ⬜ B4. Pitch Deck Builder
@@ -172,3 +177,8 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
   (matchesFilter, screen, valuationScore, sortSecurities, sectors),
   `components/research/**` (range-slider filters, sortable table, score),
   route `/research`, Research nav, seed universe + `getSecurities()`. 295 green.
+- Feature C3 (Tilt-Meter): `lib/domain/tilt.ts` + 15 tests (countInWindow,
+  loss streak, post-loss size ratio, computeTilt score+components, level,
+  lock countdown), `components/tilt/**` (radial gauge, factor bars, lockout
+  banner, impulsive-trade demo), route `/tilt`, Tilt-Meter nav, seed +
+  `getTiltTrades()`. 310 green.

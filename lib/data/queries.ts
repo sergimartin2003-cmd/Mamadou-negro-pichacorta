@@ -27,6 +27,7 @@ import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
 import type { DropshipSnapshot } from "@/lib/domain/dropship";
 import type { Task } from "@/lib/domain/tasks";
 import type { Security } from "@/lib/domain/screener";
+import type { TiltTrade } from "@/lib/domain/tilt";
 import {
   achievements,
   byId,
@@ -48,6 +49,7 @@ import {
   dropshipSnapshot,
   tasks as taskSeed,
   securities as securitiesSeed,
+  tiltTrades as tiltTradesSeed,
   notifications,
   posts,
   predictLeaderboard,
@@ -216,6 +218,10 @@ export async function getTasks(): Promise<Task[]> {
 
 export async function getSecurities(): Promise<Security[]> {
   return [...securitiesSeed];
+}
+
+export async function getTiltTrades(): Promise<TiltTrade[]> {
+  return [...tiltTradesSeed];
 }
 
 function engagement(post: Post): number {
