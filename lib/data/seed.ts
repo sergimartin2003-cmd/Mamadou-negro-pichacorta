@@ -22,6 +22,7 @@ import type {
 import type { PredictScore } from "@/lib/domain/predict";
 import type { SpeedScore } from "@/lib/domain/speed";
 import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
+import type { Season } from "@/lib/domain/season";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -766,6 +767,15 @@ export const predictLeaderboard: readonly PredictScore[] = [
   { handle: "owenp", name: "Owen Pierce", mode: "classic", score: 10, streak: 3 },
   { handle: "camir", name: "Camila Rocha", mode: "classic", score: 10, streak: 2 },
 ] as const;
+
+/** The active competitive season (3-month window). */
+export const currentSeason: Season = {
+  id: "s7",
+  number: 7,
+  name: "Cyberpunk Trading",
+  startsAt: "2026-04-01T00:00:00.000Z",
+  endsAt: "2026-07-01T00:00:00.000Z",
+};
 
 /** Seed leaderboard for the "Speed Trading Challenge" minigame. */
 export const speedLeaderboard: readonly SpeedScore[] = [

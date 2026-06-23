@@ -30,7 +30,7 @@ commit pushed to `claude/elegant-brown-38fb2l`.
 - ⬜ 8. Escape Room: The Trading Floor
 
 ### 🏆 Competición y ranking
-- ⬜ 9. Ligas Estacionales (ELO) — extends `lib/domain/elo.ts`
+- ✅ 9. Ligas Estacionales (ELO) — season countdown, ladder, end-of-season rewards, soft reset
 - ⬜ 10. Duelos 1v1
 - ⬜ 11. King of the Hill
 - ⬜ 12. Ligas por equipos (clanes)
@@ -123,3 +123,7 @@ commit pushed to `claude/elegant-brown-38fb2l`.
 - Feature 13 (Desafíos): `lib/domain/challenges.ts` + 16 tests (period keys,
   ISO week, completion, streak bonus), `components/challenges/**`, route
   `/challenges`, Quests nav, seed challenges + `getChallenges()`. 173 green.
+- Feature 9 (Ligas Estacionales): `lib/domain/season.ts` + 8 tests (countdown,
+  progress, tier rewards) built on existing `tiers.ts`/`elo.ts`,
+  `components/leagues/**`, route `/leagues`, Leagues nav, seed season +
+  `getCurrentSeason()`. 181 green, build green.

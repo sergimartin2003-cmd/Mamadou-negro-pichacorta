@@ -20,6 +20,7 @@ import type {
 import { rankScores, type PredictScore } from "@/lib/domain/predict";
 import { rankSpeedScores, type SpeedScore } from "@/lib/domain/speed";
 import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
+import type { Season } from "@/lib/domain/season";
 import {
   achievements,
   byId,
@@ -34,6 +35,7 @@ import {
   me as seedMe,
   challenges as challengeSeed,
   challengeProgress,
+  currentSeason,
   notifications,
   posts,
   predictLeaderboard,
@@ -174,6 +176,10 @@ export async function getChallenges(): Promise<{
   progress: Record<string, ChallengeProgress>;
 }> {
   return { challenges: [...challengeSeed], progress: { ...challengeProgress } };
+}
+
+export async function getCurrentSeason(): Promise<Season> {
+  return { ...currentSeason };
 }
 
 function engagement(post: Post): number {
