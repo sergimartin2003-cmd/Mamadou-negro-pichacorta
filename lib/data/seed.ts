@@ -27,6 +27,7 @@ import type { StartupSnapshot } from "@/lib/domain/startup";
 import type { StoreSnapshot } from "@/lib/domain/store";
 import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
 import type { DropshipSnapshot } from "@/lib/domain/dropship";
+import type { Task } from "@/lib/domain/tasks";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -864,6 +865,20 @@ export const dropshipSnapshot: DropshipSnapshot = {
     { id: "s4", name: "Guangzhou Bulk", avgShipDays: 22, incidentRate: 0.18, quality: 3.2, orders: 95 },
   ],
 };
+
+/** Demo Kanban board powering the Tasks/Projects module. */
+export const tasks: readonly Task[] = [
+  { id: "t1", title: "Definir buyer persona", status: "done", priority: "high", project: "Lanzamiento" },
+  { id: "t2", title: "Diseñar landing page", status: "done", priority: "high", project: "Lanzamiento" },
+  { id: "t3", title: "Configurar pasarela de pago", status: "doing", priority: "high", project: "Lanzamiento" },
+  { id: "t4", title: "Redactar política de privacidad", status: "todo", priority: "med", project: "Lanzamiento" },
+  { id: "t5", title: "Campaña de email de bienvenida", status: "doing", priority: "med", project: "Marketing" },
+  { id: "t6", title: "Crear 5 creatividades para Ads", status: "todo", priority: "high", project: "Marketing" },
+  { id: "t7", title: "Investigar keywords SEO", status: "todo", priority: "low", project: "Marketing" },
+  { id: "t8", title: "Negociar MOQ con proveedor", status: "doing", priority: "med", project: "Operaciones" },
+  { id: "t9", title: "Pedir muestras de producto", status: "done", priority: "low", project: "Operaciones" },
+  { id: "t10", title: "Automatizar fulfillment", status: "todo", priority: "high", project: "Operaciones" },
+];
 
 /** The active competitive season (3-month window). */
 export const currentSeason: Season = {

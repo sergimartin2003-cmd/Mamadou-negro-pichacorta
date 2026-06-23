@@ -25,6 +25,7 @@ import type { StartupSnapshot } from "@/lib/domain/startup";
 import type { StoreSnapshot } from "@/lib/domain/store";
 import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
 import type { DropshipSnapshot } from "@/lib/domain/dropship";
+import type { Task } from "@/lib/domain/tasks";
 import {
   achievements,
   byId,
@@ -44,6 +45,7 @@ import {
   storeSnapshot,
   portfolioSnapshot,
   dropshipSnapshot,
+  tasks as taskSeed,
   notifications,
   posts,
   predictLeaderboard,
@@ -204,6 +206,10 @@ export async function getPortfolioSnapshot(): Promise<PortfolioSnapshot> {
 
 export async function getDropshipSnapshot(): Promise<DropshipSnapshot> {
   return dropshipSnapshot;
+}
+
+export async function getTasks(): Promise<Task[]> {
+  return [...taskSeed];
 }
 
 function engagement(post: Post): number {

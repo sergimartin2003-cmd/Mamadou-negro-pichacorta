@@ -16,7 +16,7 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
 ### 💼 Track B — Multi-niche modules
 - ✅ B1. Startup Dashboard — MRR/ARR, churn, CAC, LTV, LTV:CAC, burn, runway, growth, goal, alerts
 - ⬜ B2. Business Model Canvas · ⬜ B3. Idea Validation · ⬜ B4. Pitch Deck Builder
-- ⬜ B5. Entrepreneur Mentoring · ⬜ B6. Tasks/Projects · ⬜ B7. Legal Tech · ⬜ B8. Financial Modeling
+- ⬜ B5. Entrepreneur Mentoring · ✅ B6. Tasks/Projects (Kanban — move/advance, progress, project filter) · ⬜ B7. Legal Tech · ⬜ B8. Financial Modeling
 - ✅ B9. Portfolio Tracker — multi-asset value/P&L, allocation by type+region, concentration & diversification, holdings table
 - ⬜ B10. Robo-Advisor · ⬜ B11. Real Estate · ⬜ B12. Crypto Portfolio
 - ⬜ B13. Dividend Tracker · ⬜ B14. Alt Investments · ⬜ B15. Retirement Planner · ⬜ B16. Research Hub
@@ -163,3 +163,8 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
   (gross/net profit, margin, AOV, refund rate, CAC, ROAS, break-even ROAS,
   supplier score, alerts), `components/dropship/**`, route `/dropshipping`,
   Dropship nav, box icon, seed + `getDropshipSnapshot()`. 264 green.
+- Feature B6 (Tasks/Projects Kanban): `lib/domain/tasks.ts` + 16 tests (move/
+  advance/retreat immutable, counts by status/priority, completion rate,
+  project filter), `components/tasks/**` (animated board, move buttons,
+  project segmented), route `/tasks`, Tasks nav, board icon, seed + `getTasks()`.
+  280 green.
