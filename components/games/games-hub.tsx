@@ -20,12 +20,12 @@ const GAMES: readonly GameEntry[] = [
     status: "live",
   },
   {
-    href: null,
+    href: "/games/speed-trading",
     title: "Speed Trading Challenge",
     tagline: "60 segundos para encadenar el máximo de trades ganadores.",
     icon: "bolt",
     accent: "var(--t-gold)",
-    status: "soon",
+    status: "live",
   },
   {
     href: null,

@@ -18,6 +18,7 @@ import type {
   Profile,
 } from "@/types/db";
 import { rankScores, type PredictScore } from "@/lib/domain/predict";
+import { rankSpeedScores, type SpeedScore } from "@/lib/domain/speed";
 import {
   achievements,
   byId,
@@ -33,6 +34,7 @@ import {
   notifications,
   posts,
   predictLeaderboard,
+  speedLeaderboard,
   traders,
 } from "./seed";
 
@@ -158,6 +160,10 @@ export async function getDmThread(id: string): Promise<DmMessage[]> {
 
 export async function getPredictLeaderboard(): Promise<PredictScore[]> {
   return rankScores(predictLeaderboard);
+}
+
+export async function getSpeedLeaderboard(): Promise<SpeedScore[]> {
+  return rankSpeedScores(speedLeaderboard);
 }
 
 function engagement(post: Post): number {

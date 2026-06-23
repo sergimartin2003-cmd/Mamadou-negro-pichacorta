@@ -20,6 +20,7 @@ import type {
   Profile,
 } from "@/types/db";
 import type { PredictScore } from "@/lib/domain/predict";
+import type { SpeedScore } from "@/lib/domain/speed";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -763,6 +764,17 @@ export const predictLeaderboard: readonly PredictScore[] = [
   { handle: "priya_a", name: "Priya Anand", mode: "classic", score: 10, streak: 4 },
   { handle: "owenp", name: "Owen Pierce", mode: "classic", score: 10, streak: 3 },
   { handle: "camir", name: "Camila Rocha", mode: "classic", score: 10, streak: 2 },
+] as const;
+
+/** Seed leaderboard for the "Speed Trading Challenge" minigame. */
+export const speedLeaderboard: readonly SpeedScore[] = [
+  { handle: "kaito_fx", name: "Kaito Mercer", score: 2400, trades: 31, accuracy: 0.74 },
+  { handle: "lenatrades", name: "Lena Volkov", score: 2150, trades: 28, accuracy: 0.79 },
+  { handle: "dcole", name: "Dmitri Cole", score: 1850, trades: 26, accuracy: 0.69 },
+  { handle: "theonk", name: "Theo Nakamura", score: 1600, trades: 24, accuracy: 0.67 },
+  { handle: "sofiacharts", name: "Sofia Marín", score: 1350, trades: 22, accuracy: 0.64 },
+  { handle: "aisha_b", name: "Aisha Bello", score: 1100, trades: 19, accuracy: 0.63 },
+  { handle: "owenp", name: "Owen Pierce", score: 900, trades: 17, accuracy: 0.59 },
 ] as const;
 
 /**
