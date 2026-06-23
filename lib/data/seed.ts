@@ -26,6 +26,7 @@ import type { Season } from "@/lib/domain/season";
 import type { StartupSnapshot } from "@/lib/domain/startup";
 import type { StoreSnapshot } from "@/lib/domain/store";
 import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
+import type { DropshipSnapshot } from "@/lib/domain/dropship";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -840,6 +841,27 @@ export const portfolioSnapshot: PortfolioSnapshot = {
     { id: "h6", name: "REIT Inmobiliario EU", symbol: "EPRA", type: "realestate", region: "EU", quantity: 110, avgCost: 38, price: 44 },
     { id: "h7", name: "Oro físico (ETC)", symbol: "SGLN", type: "commodity", region: "Global", quantity: 30, avgCost: 31, price: 39 },
     { id: "h8", name: "Efectivo", symbol: "EUR", type: "cash", region: "EU", quantity: 3200, avgCost: 1, price: 1 },
+  ],
+};
+
+/** Demo dropshipping business powering the Dropshipping Dashboard module. */
+export const dropshipSnapshot: DropshipSnapshot = {
+  name: "PetGadget Pro",
+  currency: "€",
+  stats: {
+    revenue: 42800,
+    cogs: 15400,
+    adSpend: 16200,
+    otherCosts: 2100,
+    orders: 1180,
+    refunds: 58,
+    newCustomers: 940,
+  },
+  suppliers: [
+    { id: "s1", name: "Shenzhen FastShip", avgShipDays: 8, incidentRate: 0.03, quality: 4.6, orders: 540 },
+    { id: "s2", name: "Yiwu Trading Co.", avgShipDays: 14, incidentRate: 0.07, quality: 4.1, orders: 380 },
+    { id: "s3", name: "EU Warehouse Direct", avgShipDays: 4, incidentRate: 0.02, quality: 4.8, orders: 210 },
+    { id: "s4", name: "Guangzhou Bulk", avgShipDays: 22, incidentRate: 0.18, quality: 3.2, orders: 95 },
   ],
 };
 

@@ -24,6 +24,7 @@ import type { Season } from "@/lib/domain/season";
 import type { StartupSnapshot } from "@/lib/domain/startup";
 import type { StoreSnapshot } from "@/lib/domain/store";
 import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
+import type { DropshipSnapshot } from "@/lib/domain/dropship";
 import {
   achievements,
   byId,
@@ -42,6 +43,7 @@ import {
   startupSnapshot,
   storeSnapshot,
   portfolioSnapshot,
+  dropshipSnapshot,
   notifications,
   posts,
   predictLeaderboard,
@@ -198,6 +200,10 @@ export async function getStoreSnapshot(): Promise<StoreSnapshot> {
 
 export async function getPortfolioSnapshot(): Promise<PortfolioSnapshot> {
   return portfolioSnapshot;
+}
+
+export async function getDropshipSnapshot(): Promise<DropshipSnapshot> {
+  return dropshipSnapshot;
 }
 
 function engagement(post: Post): number {

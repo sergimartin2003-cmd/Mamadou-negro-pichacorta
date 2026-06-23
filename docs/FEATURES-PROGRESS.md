@@ -23,7 +23,8 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
 - ✅ B17. Store Builder — KPIs (conv, AOV, refunds, growth), catalog w/ margins+stock, top products, low-stock alerts
 - ⬜ B18. Product Research · ⬜ B19. Supplier Directory · ⬜ B20. Inventory
 - ⬜ B21. CRM · ⬜ B22. Marketing Automation · ⬜ B23. Shipping · ⬜ B24. Multi-channel
-- ⬜ B25–B32. Dropshipping suite · ⬜ B33–B38. Marketing digital · ⬜ B39–B44. Productividad/Mindset
+- ✅ B25. Dropshipping Dashboard — net profit, ROAS vs break-even, CAC, refunds, supplier scorecard, alerts
+- ⬜ B26–B32. Dropshipping suite · ⬜ B33–B38. Marketing digital · ⬜ B39–B44. Productividad/Mindset
 
 ## Conventions / compliance notes
 - The seed-backed data layer (`lib/data`) is the source of truth until Supabase
@@ -158,3 +159,7 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
   value, P&L, return %, allocation by type/region, concentration, Herfindahl
   diversification, top movers), `components/portfolio/**`, route `/portfolio`,
   Invest nav, pie icon, seed portfolio + `getPortfolioSnapshot()`. 244 green.
+- Feature B25 (Dropshipping Dashboard): `lib/domain/dropship.ts` + 20 tests
+  (gross/net profit, margin, AOV, refund rate, CAC, ROAS, break-even ROAS,
+  supplier score, alerts), `components/dropship/**`, route `/dropshipping`,
+  Dropship nav, box icon, seed + `getDropshipSnapshot()`. 264 green.
