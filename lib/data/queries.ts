@@ -19,6 +19,7 @@ import type {
 } from "@/types/db";
 import { rankScores, type PredictScore } from "@/lib/domain/predict";
 import { rankSpeedScores, type SpeedScore } from "@/lib/domain/speed";
+import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
 import {
   achievements,
   byId,
@@ -31,6 +32,8 @@ import {
   learningPaths,
   lessons,
   me as seedMe,
+  challenges as challengeSeed,
+  challengeProgress,
   notifications,
   posts,
   predictLeaderboard,
@@ -164,6 +167,13 @@ export async function getPredictLeaderboard(): Promise<PredictScore[]> {
 
 export async function getSpeedLeaderboard(): Promise<SpeedScore[]> {
   return rankSpeedScores(speedLeaderboard);
+}
+
+export async function getChallenges(): Promise<{
+  challenges: Challenge[];
+  progress: Record<string, ChallengeProgress>;
+}> {
+  return { challenges: [...challengeSeed], progress: { ...challengeProgress } };
 }
 
 function engagement(post: Post): number {

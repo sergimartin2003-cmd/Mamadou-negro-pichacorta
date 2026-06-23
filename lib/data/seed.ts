@@ -21,6 +21,7 @@ import type {
 } from "@/types/db";
 import type { PredictScore } from "@/lib/domain/predict";
 import type { SpeedScore } from "@/lib/domain/speed";
+import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -776,6 +777,38 @@ export const speedLeaderboard: readonly SpeedScore[] = [
   { handle: "aisha_b", name: "Aisha Bello", score: 1100, trades: 19, accuracy: 0.63 },
   { handle: "owenp", name: "Owen Pierce", score: 900, trades: 17, accuracy: 0.59 },
 ] as const;
+
+/** Active challenges across the three reset periods. */
+export const challenges: readonly Challenge[] = [
+  { id: "d1", period: "daily", title: "Gana 3 trades seguidos", goal: 3, reward: 50 },
+  { id: "d2", period: "daily", title: "Opera en 3 mercados diferentes", goal: 3, reward: 75 },
+  { id: "d3", period: "daily", title: "Consigue un R:R > 3", goal: 1, reward: 100 },
+  { id: "d4", period: "daily", title: "Ayuda a 5 usuarios en el chat", goal: 5, reward: 50 },
+  { id: "w1", period: "weekly", title: "Gana 50 trades", goal: 50, reward: 500 },
+  { id: "w2", period: "weekly", title: "Sube 100 puntos ELO", goal: 100, reward: 750 },
+  { id: "w3", period: "weekly", title: "Gana 3 duelos 1v1", goal: 3, reward: 600 },
+  { id: "w4", period: "weekly", title: "Invita a 10 amigos", goal: 10, reward: 1000 },
+  { id: "m1", period: "monthly", title: "Gana 500 trades", goal: 500, reward: 5000 },
+  { id: "m2", period: "monthly", title: "Alcanza la liga Oro", goal: 1, reward: 10000 },
+  { id: "m3", period: "monthly", title: "Gana 1 competición", goal: 1, reward: 7500 },
+  { id: "m4", period: "monthly", title: "Consigue 100 seguidores", goal: 100, reward: 3000 },
+] as const;
+
+/** Demo progress for the signed-in user. */
+export const challengeProgress: Readonly<Record<string, ChallengeProgress>> = {
+  d1: { current: 3, claimed: false },
+  d2: { current: 2, claimed: false },
+  d3: { current: 1, claimed: true },
+  d4: { current: 3, claimed: false },
+  w1: { current: 41, claimed: false },
+  w2: { current: 100, claimed: false },
+  w3: { current: 1, claimed: false },
+  w4: { current: 4, claimed: false },
+  m1: { current: 312, claimed: false },
+  m2: { current: 0, claimed: false },
+  m3: { current: 0, claimed: false },
+  m4: { current: 87, claimed: false },
+};
 
 /**
  * Deterministic-ish sparkline generator. Produces `n` points in the 8–92 band,

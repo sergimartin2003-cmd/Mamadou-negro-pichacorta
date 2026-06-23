@@ -34,7 +34,7 @@ commit pushed to `claude/elegant-brown-38fb2l`.
 - ⬜ 10. Duelos 1v1
 - ⬜ 11. King of the Hill
 - ⬜ 12. Ligas por equipos (clanes)
-- ⬜ 13. Desafíos diarios/semanales/mensuales
+- ✅ 13. Desafíos diarios/semanales/mensuales — periods, progress, claim, streak bonus
 - ⬜ 14. Rankings especializados
 
 ### 🎨 Personalización
@@ -120,3 +120,6 @@ commit pushed to `claude/elegant-brown-38fb2l`.
 - Feature 6 (Speed Trading Challenge): `lib/domain/speed.ts` + 17 tests,
   `components/games/speed-trading/**`, route `/games/speed-trading`, hub entry,
   seed leaderboard + `getSpeedLeaderboard()`. 157 tests green, build green.
+- Feature 13 (Desafíos): `lib/domain/challenges.ts` + 16 tests (period keys,
+  ISO week, completion, streak bonus), `components/challenges/**`, route
+  `/challenges`, Quests nav, seed challenges + `getChallenges()`. 173 green.
