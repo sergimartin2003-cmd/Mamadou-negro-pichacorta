@@ -19,7 +19,8 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
 - ⬜ B5. Entrepreneur Mentoring · ⬜ B6. Tasks/Projects · ⬜ B7. Legal Tech · ⬜ B8. Financial Modeling
 - ⬜ B9. Portfolio Tracker · ⬜ B10. Robo-Advisor · ⬜ B11. Real Estate · ⬜ B12. Crypto Portfolio
 - ⬜ B13. Dividend Tracker · ⬜ B14. Alt Investments · ⬜ B15. Retirement Planner · ⬜ B16. Research Hub
-- ⬜ B17. Store Builder · ⬜ B18. Product Research · ⬜ B19. Supplier Directory · ⬜ B20. Inventory
+- ✅ B17. Store Builder — KPIs (conv, AOV, refunds, growth), catalog w/ margins+stock, top products, low-stock alerts
+- ⬜ B18. Product Research · ⬜ B19. Supplier Directory · ⬜ B20. Inventory
 - ⬜ B21. CRM · ⬜ B22. Marketing Automation · ⬜ B23. Shipping · ⬜ B24. Multi-channel
 - ⬜ B25–B32. Dropshipping suite · ⬜ B33–B38. Marketing digital · ⬜ B39–B44. Productividad/Mindset
 
@@ -148,3 +149,7 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
   churn, CAC, LTV, LTV:CAC, burn, runway, growth, required growth, alerts),
   `components/startup/**`, route `/startup`, Startup nav, briefcase icon,
   seed snapshot + `getStartupSnapshot()`. 207 green, build green.
+- Feature B17 (Store Builder): `lib/domain/store.ts` + 20 tests (conversion,
+  AOV, refund rate, revenue growth, gross margin, stock status, inventory/
+  retail value, low-stock, top products), `components/store/**`, route
+  `/store`, Store nav, bag icon, seed store + `getStoreSnapshot()`. 227 green.

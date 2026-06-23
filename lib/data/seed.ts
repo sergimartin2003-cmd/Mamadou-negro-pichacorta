@@ -24,6 +24,7 @@ import type { SpeedScore } from "@/lib/domain/speed";
 import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
 import type { Season } from "@/lib/domain/season";
 import type { StartupSnapshot } from "@/lib/domain/startup";
+import type { StoreSnapshot } from "@/lib/domain/store";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -805,6 +806,24 @@ export const startupSnapshot: StartupSnapshot = {
   churnDeltaPct: 2,
   goalMrr: 30000,
   goalMonths: 6,
+};
+
+/** Demo online store powering the Store Builder module. */
+export const storeSnapshot: StoreSnapshot = {
+  name: "Nordic Goods",
+  currency: "€",
+  theme: "Minimal Mono",
+  stats: { visitors: 18420, orders: 642, revenue: 28940, prevRevenue: 24100, refunds: 19 },
+  products: [
+    { id: "p1", name: "Oak Desk Organizer", category: "Hogar", price: 39, cost: 14, stock: 48, sales: 312 },
+    { id: "p2", name: "Linen Throw Blanket", category: "Hogar", price: 59, cost: 23, stock: 4, sales: 268 },
+    { id: "p3", name: "Ceramic Pour-Over", category: "Cocina", price: 34, cost: 12, stock: 0, sales: 244 },
+    { id: "p4", name: "Wool Slippers", category: "Moda", price: 45, cost: 18, stock: 73, sales: 198 },
+    { id: "p5", name: "Brass Candle Set", category: "Decoración", price: 28, cost: 9, stock: 3, sales: 176 },
+    { id: "p6", name: "Recycled Tote", category: "Moda", price: 22, cost: 7, stock: 120, sales: 154 },
+    { id: "p7", name: "Stoneware Mug", category: "Cocina", price: 18, cost: 6, stock: 60, sales: 132 },
+    { id: "p8", name: "Cork Yoga Block", category: "Deporte", price: 24, cost: 8, stock: 2, sales: 96 },
+  ],
 };
 
 /** The active competitive season (3-month window). */
