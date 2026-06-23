@@ -25,6 +25,7 @@ import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
 import type { Season } from "@/lib/domain/season";
 import type { StartupSnapshot } from "@/lib/domain/startup";
 import type { StoreSnapshot } from "@/lib/domain/store";
+import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
 
 /** Avatar gradient palettes keyed by index, mirroring the prototype `AV` array. */
 export const AV: readonly AvatarGradient[] = [
@@ -823,6 +824,22 @@ export const storeSnapshot: StoreSnapshot = {
     { id: "p6", name: "Recycled Tote", category: "Moda", price: 22, cost: 7, stock: 120, sales: 154 },
     { id: "p7", name: "Stoneware Mug", category: "Cocina", price: 18, cost: 6, stock: 60, sales: 132 },
     { id: "p8", name: "Cork Yoga Block", category: "Deporte", price: 24, cost: 8, stock: 2, sales: 96 },
+  ],
+};
+
+/** Demo multi-asset portfolio powering the Portfolio Tracker module. */
+export const portfolioSnapshot: PortfolioSnapshot = {
+  name: "Mi cartera",
+  currency: "€",
+  holdings: [
+    { id: "h1", name: "Apple", symbol: "AAPL", type: "stock", region: "US", quantity: 24, avgCost: 145, price: 212 },
+    { id: "h2", name: "Vanguard S&P 500", symbol: "VUSA", type: "etf", region: "US", quantity: 60, avgCost: 78, price: 96 },
+    { id: "h3", name: "Bitcoin", symbol: "BTC", type: "crypto", region: "Global", quantity: 0.35, avgCost: 41000, price: 58000 },
+    { id: "h4", name: "Ethereum", symbol: "ETH", type: "crypto", region: "Global", quantity: 4, avgCost: 3100, price: 2700 },
+    { id: "h5", name: "iShares Euro Govt Bond", symbol: "IEGA", type: "bond", region: "EU", quantity: 80, avgCost: 52, price: 50 },
+    { id: "h6", name: "REIT Inmobiliario EU", symbol: "EPRA", type: "realestate", region: "EU", quantity: 110, avgCost: 38, price: 44 },
+    { id: "h7", name: "Oro físico (ETC)", symbol: "SGLN", type: "commodity", region: "Global", quantity: 30, avgCost: 31, price: 39 },
+    { id: "h8", name: "Efectivo", symbol: "EUR", type: "cash", region: "EU", quantity: 3200, avgCost: 1, price: 1 },
   ],
 };
 

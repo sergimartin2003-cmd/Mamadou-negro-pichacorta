@@ -23,6 +23,7 @@ import type { Challenge, ChallengeProgress } from "@/lib/domain/challenges";
 import type { Season } from "@/lib/domain/season";
 import type { StartupSnapshot } from "@/lib/domain/startup";
 import type { StoreSnapshot } from "@/lib/domain/store";
+import type { PortfolioSnapshot } from "@/lib/domain/portfolio";
 import {
   achievements,
   byId,
@@ -40,6 +41,7 @@ import {
   currentSeason,
   startupSnapshot,
   storeSnapshot,
+  portfolioSnapshot,
   notifications,
   posts,
   predictLeaderboard,
@@ -192,6 +194,10 @@ export async function getStartupSnapshot(): Promise<StartupSnapshot> {
 
 export async function getStoreSnapshot(): Promise<StoreSnapshot> {
   return storeSnapshot;
+}
+
+export async function getPortfolioSnapshot(): Promise<PortfolioSnapshot> {
+  return portfolioSnapshot;
 }
 
 function engagement(post: Post): number {

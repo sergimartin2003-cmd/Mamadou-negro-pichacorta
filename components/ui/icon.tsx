@@ -46,6 +46,7 @@ export const ICONS = {
   menu: "M4 7h16M4 12h16M4 17h16",
   briefcase: "M3 8h18v11H3V8ZM8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18",
   bag: "M6 8h12l-1 12H7L6 8ZM9 8V6a3 3 0 0 1 6 0v2",
+  pie: "M12 3a9 9 0 1 0 9 9h-9V3Z M12 3v9h9A9 9 0 0 0 12 3Z",
 } as const;
 
 export type IconName = keyof typeof ICONS;

@@ -17,7 +17,8 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
 - ✅ B1. Startup Dashboard — MRR/ARR, churn, CAC, LTV, LTV:CAC, burn, runway, growth, goal, alerts
 - ⬜ B2. Business Model Canvas · ⬜ B3. Idea Validation · ⬜ B4. Pitch Deck Builder
 - ⬜ B5. Entrepreneur Mentoring · ⬜ B6. Tasks/Projects · ⬜ B7. Legal Tech · ⬜ B8. Financial Modeling
-- ⬜ B9. Portfolio Tracker · ⬜ B10. Robo-Advisor · ⬜ B11. Real Estate · ⬜ B12. Crypto Portfolio
+- ✅ B9. Portfolio Tracker — multi-asset value/P&L, allocation by type+region, concentration & diversification, holdings table
+- ⬜ B10. Robo-Advisor · ⬜ B11. Real Estate · ⬜ B12. Crypto Portfolio
 - ⬜ B13. Dividend Tracker · ⬜ B14. Alt Investments · ⬜ B15. Retirement Planner · ⬜ B16. Research Hub
 - ✅ B17. Store Builder — KPIs (conv, AOV, refunds, growth), catalog w/ margins+stock, top products, low-stock alerts
 - ⬜ B18. Product Research · ⬜ B19. Supplier Directory · ⬜ B20. Inventory
@@ -153,3 +154,7 @@ This repo now grows TWO specs as new TradeHub modules (branding stays
   AOV, refund rate, revenue growth, gross margin, stock status, inventory/
   retail value, low-stock, top products), `components/store/**`, route
   `/store`, Store nav, bag icon, seed store + `getStoreSnapshot()`. 227 green.
+- Feature B9 (Portfolio Tracker): `lib/domain/portfolio.ts` + 17 tests (market
+  value, P&L, return %, allocation by type/region, concentration, Herfindahl
+  diversification, top movers), `components/portfolio/**`, route `/portfolio`,
+  Invest nav, pie icon, seed portfolio + `getPortfolioSnapshot()`. 244 green.
